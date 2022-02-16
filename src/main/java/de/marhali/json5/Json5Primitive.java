@@ -34,6 +34,44 @@ import java.util.Objects;
  */
 public abstract class Json5Primitive extends Json5Element {
 
+    /**
+     * Quick creator for a primitive with boolean value.
+     * @param value Boolean value to apply.
+     * @return Corresponding primitive with provided value.
+     */
+    public static Json5Primitive of(Boolean value) {
+        return new Json5Boolean(value);
+    }
+
+    /**
+     * Quick creator for a primitive with number value.
+     * @param value Number value to apply.
+     * @return Corresponding primitive with provided value.
+     */
+    public static Json5Primitive of(Number value) {
+        return new Json5Number(value);
+    }
+
+    /**
+     * Quick creator for a primitive with string value.
+     * Set hexadecimal to true to receive a {@link Json5Hexadecimal}.
+     * @param value String value to apply.
+     * @param hexadecimal Is the provided value a hex string literal?
+     * @return Corresponding primitive with provided value.
+     */
+    public static Json5Primitive of(String value, boolean hexadecimal) {
+        return hexadecimal ? new Json5Hexadecimal(value) : new Json5String(value);
+    }
+
+    /**
+     * Quick creator for a primitive with string value.
+     * @param value String value to apply.
+     * @return Corresponding primitive with provided value.
+     */
+    public static Json5Primitive of(String value) {
+        return new Json5String(value);
+    }
+
     protected final Object value;
 
     public Json5Primitive(Object value) {
