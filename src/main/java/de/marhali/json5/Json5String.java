@@ -17,7 +17,7 @@
 package de.marhali.json5;
 
 /**
- * A class representing a json5 string.
+ * A class representing a json5 string value.
  *
  * @author Marcel Haßlinger
  */

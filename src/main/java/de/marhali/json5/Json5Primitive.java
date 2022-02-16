@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /**
  * A class representing a Json primitive value. A primitive value
- * is either a String, Hexadecimal, a Java primitive, or a Java primitive
+ * is either a String, a Hexadecimal, a Java primitive, or a Java primitive
  * wrapper type.
  *
  * @author Marcel Haßlinger
