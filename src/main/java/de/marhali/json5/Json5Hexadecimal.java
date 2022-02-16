@@ -29,6 +29,7 @@ public class Json5Hexadecimal extends Json5Primitive {
     /**
      * Converts the provided hex string into it's number representation.
      * Allowed is the character representation of a hex key. Format must be: 0x..., +0x... or -0x...
+     *
      * @param hex the hexadecimal value including prefix
      * @return Number representation of hexadecimal string
      */
@@ -47,24 +48,24 @@ public class Json5Hexadecimal extends Json5Primitive {
 
     /**
      * Converts the provided number into it's hex literal character representation.
-     * @param bigInteger the number value
-     * @return Hex character string inclduding prefix
+     *
+     * @param bigInteger     the number value
+     * @param prefixPositive Prefix positive values with {@code +0x...} if true otherwise {@code 0x...}.
+     * @return Hex character string including prefix
      */
-    public static String serializeHexString(BigInteger bigInteger) {
+    public static String serializeHexString(BigInteger bigInteger, boolean prefixPositive) {
         Objects.requireNonNull(bigInteger);
 
-        switch (bigInteger.signum()) {
-            case 1: // Positive
-                return "+0x" + bigInteger.toString(16);
-            case -1: // Negative
-                return "-0x" + bigInteger.toString(16);
-            default: // Neutral
-                return "0x" + bigInteger.toString(16);
+        if(bigInteger.signum() >= 0) {
+            return (prefixPositive ? "+0x" : "0x") + bigInteger.toString(16);
+        } else {
+            return "-0x" + bigInteger.abs().toString(16);
         }
     }
 
     /**
      * Creates a primitive containing a hex value.
+     *
      * @param hex the value to create the primitive with.
      */
     public Json5Hexadecimal(BigInteger hex) {
@@ -73,6 +74,7 @@ public class Json5Hexadecimal extends Json5Primitive {
 
     /**
      * Creates a primitive containing a hex value. For String to Number conversion see {@link #parseHexString(String)}
+     *
      * @param hex the value to create the primitive with.
      */
     public Json5Hexadecimal(String hex) {
@@ -81,10 +83,11 @@ public class Json5Hexadecimal extends Json5Primitive {
 
     /**
      * Constructs the string representation of the stored hex value.
+     *
      * @return Hex value as character literal.
      */
     @Override
     public String getAsString() {
-        return serializeHexString(super.getAsBigInteger());
+        return serializeHexString(super.getAsBigInteger(), false);
     }
 }
