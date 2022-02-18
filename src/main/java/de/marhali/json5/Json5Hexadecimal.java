@@ -24,7 +24,7 @@ import java.util.Objects;
  *
  * @author Marcel Haßlinger
  */
-public class Json5Hexadecimal extends Json5Primitive {
+public final class Json5Hexadecimal extends Json5Primitive {
 
     /**
      * Converts the provided hex string into it's number representation.

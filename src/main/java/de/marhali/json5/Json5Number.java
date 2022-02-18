@@ -21,7 +21,7 @@ package de.marhali.json5;
  *
  * @author Marcel Haßlinger
  */
-public class Json5Number extends Json5Primitive {
+public final class Json5Number extends Json5Primitive {
 
     public Json5Number(Number number) {
         super(number);
