@@ -151,6 +151,12 @@ public final class Json5Writer {
 
             index++;
         }
+
+        if(options.getIndentFactor() > 0) {
+            writer.append('\n').append(indent);
+        }
+
+        writer.append('}');
     }
 
     /**
