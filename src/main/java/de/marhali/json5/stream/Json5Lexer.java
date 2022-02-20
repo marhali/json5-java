@@ -32,7 +32,6 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -107,13 +106,8 @@ public class Json5Lexer {
      * @param options the options for lexing.
      */
     public Json5Lexer(Reader reader, Json5Options options) {
-        Objects.requireNonNull(reader);
-        Objects.requireNonNull(options);
-
-        this.reader = reader.markSupported() ?
-                reader : new BufferedReader(reader);
-
-        this.options = options;
+        this.reader = Objects.requireNonNull(reader).markSupported() ? reader : new BufferedReader(reader);
+        this.options = Objects.requireNonNull(options);
 
         eof = false;
         back = false;
@@ -613,15 +607,9 @@ public class Json5Lexer {
 
             switch (special) {
                 case "NaN":
-                    if (!options.isAllowNaN())
-                        throw syntaxError("NaN is not allowed");
-
                     d = Double.NaN;
                     break;
                 case "Infinity":
-                    if (!options.isAllowInfinity())
-                        throw syntaxError("Infinity is not allowed");
-
                     d = Double.POSITIVE_INFINITY;
                     break;
             }
