@@ -24,6 +24,22 @@ package de.marhali.json5;
 public class Json5Options {
 
     /**
+     * Default configuration options. Allow invalid surrogate, disabled pretty-printing.
+     */
+    public static final Json5Options DEFAULT = new Json5OptionsBuilder()
+            .allowInvalidSurrogate()
+            .trailingComma()
+            .prettyPrinting()
+            .build();
+
+    /**
+     * @return Builder pattern to configure json5 behaviour.
+     */
+    public static Json5OptionsBuilder builder() {
+        return new Json5OptionsBuilder();
+    }
+
+    /**
      * Whether invalid unicode surrogate pairs should be allowed
      */
     private final boolean allowInvalidSurrogates;
@@ -49,7 +65,7 @@ public class Json5Options {
         this.allowInvalidSurrogates = allowInvalidSurrogates;
         this.quoteSingle = quoteSingle;
         this.trailingComma = trailingComma;
-        this.indentFactor = indentFactor;
+        this.indentFactor = Math.max(0, indentFactor);
     }
 
     public boolean isAllowInvalidSurrogates() {
