@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * A class representing an element of Json5. It could either be a {@link Json5Object}, a
@@ -291,12 +292,24 @@ public abstract class Json5Element {
     /**
      * Returns a simple String representation of this element.
      * For pretty-printing use {@link Json5Writer} with custom configuration options.
+     * @see #toString(Json5Options)
      */
     @Override
     public String toString() {
+        return toString(Json5Options.DEFAULT);
+    }
+
+    /**
+     * Returns the String representation of this element.
+     * @param options Configured serialization behaviour
+     * @return Stringified representation of this element
+     */
+    public String toString(Json5Options options) {
+        Objects.requireNonNull(options);
+
         try {
             StringWriter stringWriter = new StringWriter();
-            Json5Writer json5Writer = new Json5Writer(Json5Options.builder().build(), stringWriter);
+            Json5Writer json5Writer = new Json5Writer(options, stringWriter);
             json5Writer.write(this);
             return stringWriter.toString();
 
