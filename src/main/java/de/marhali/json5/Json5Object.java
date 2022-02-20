@@ -36,7 +36,6 @@ public final class Json5Object extends Json5Element {
 
     /**
      * Creates a deep copy of this element and all its children
-     * @since 2.8.2
      */
     @Override
     public Json5Object deepCopy() {
@@ -64,7 +63,6 @@ public final class Json5Object extends Json5Element {
      *
      * @param property name of the member that should be removed.
      * @return the {@link Json5Element} object that is being removed.
-     * @since 1.3
      */
     public Json5Element remove(String property) {
         return members.remove(property);
@@ -128,7 +126,6 @@ public final class Json5Object extends Json5Element {
      * Returns a set of members key values.
      *
      * @return a set of member keys as Strings
-     * @since 2.8.1
      */
     public Set<String> keySet() {
         return members.keySet();

@@ -48,7 +48,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
 
     /**
      * Creates a deep copy of this element and all its children
-     * @since 2.8.2
      */
     @Override
     public Json5Array deepCopy() {
@@ -136,7 +135,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * If the array does not contain the element, it is unchanged.
      * @param element element to be removed from this array, if present
      * @return true if this array contained the specified element, false otherwise
-     * @since 2.3
      */
     public boolean remove(Json5Element element) {
         return elements.remove(element);
@@ -149,7 +147,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @param index index the index of the element to be removed
      * @return the element previously at the specified position
      * @throws IndexOutOfBoundsException if the specified index is outside the array bounds
-     * @since 2.3
      */
     public Json5Element remove(int index) {
         return elements.remove(index);
@@ -159,7 +156,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * Returns true if this array contains the specified element.
      * @return true if this array contains the specified element.
      * @param element whose presence in this array is to be tested
-     * @since 2.3
      */
     public boolean contains(Json5Element element) {
         return elements.contains(element);
@@ -260,7 +256,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
      * @throws NumberFormatException if the element at index 0 is not a valid {@link BigDecimal}.
      * @throws IllegalStateException if the array has more than one element.
-     * @since 1.2
      */
     @Override
     public BigDecimal getAsBigDecimal() {
@@ -277,7 +272,6 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
      * @throws NumberFormatException if the element at index 0 is not a valid {@link BigInteger}.
      * @throws IllegalStateException if the array has more than one element.
-     * @since 1.2
      */
     @Override
     public BigInteger getAsBigInteger() {

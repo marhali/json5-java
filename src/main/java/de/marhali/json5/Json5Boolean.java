@@ -22,7 +22,6 @@ package de.marhali.json5;
  * @author Marcel Haßlinger
  */
 public final class Json5Boolean extends Json5Primitive {
-
     public Json5Boolean(Boolean value) {
         super(value);
     }

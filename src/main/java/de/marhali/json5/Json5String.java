@@ -22,7 +22,6 @@ package de.marhali.json5;
  * @author Marcel Haßlinger
  */
 public final class Json5String extends Json5Primitive {
-
     public Json5String(String string) {
         super(string);
     }

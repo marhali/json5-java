@@ -17,32 +17,24 @@
 package de.marhali.json5;
 
 /**
- * A class representing a Json {@code null} value.
+ * A class representing a Json {@code null} literal value.
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
- * @since 1.2
  */
 public final class Json5Null extends Json5Element {
     /**
-     * singleton for JsonNull
-     *
-     * @since 1.8
+     * Singleton for json {@code null} literal
      */
     public static final Json5Null INSTANCE = new Json5Null();
 
     /**
-     * Creates a new JsonNull object.
-     * Deprecated since Gson version 1.8. Use {@link #INSTANCE} instead
+     * Constructor for internal use only. Use {@link #INSTANCE} instead.
      */
-    @Deprecated
-    public Json5Null() {
-        // Do nothing
-    }
+    private Json5Null() {}
 
     /**
      * Returns the same instance since it is an immutable value
-     * @since 2.8.2
      */
     @Override
     public Json5Null deepCopy() {
