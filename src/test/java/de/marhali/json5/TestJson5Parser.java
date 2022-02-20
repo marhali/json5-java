@@ -40,6 +40,9 @@ public class TestJson5Parser {
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));
+        assertTrue(element.get(0).getAsJsonPrimitive() instanceof Json5String);
+        assertTrue(element.get(1).getAsJsonPrimitive() instanceof Json5Number);
+        assertTrue(element.get(3).isJsonObject());
     }
 
     @Test
@@ -49,6 +52,8 @@ public class TestJson5Parser {
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals(payload, element.toString(options));
+        assertEquals("value", element.get("key").getAsString());
+        assertTrue(element.get("array").isJsonArray());
     }
 
     @Test
