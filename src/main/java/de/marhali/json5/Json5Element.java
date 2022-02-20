@@ -17,6 +17,9 @@
 
 package de.marhali.json5;
 
+import de.marhali.json5.stream.Json5Writer;
+
+import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -286,24 +289,19 @@ public abstract class Json5Element {
     }
 
     /**
-     * Returns a String representation of this element.
+     * Returns a simple String representation of this element.
+     * For pretty-printing use {@link Json5Writer} with custom configuration options.
      */
     @Override
     public String toString() {
-        /*
         try {
             StringWriter stringWriter = new StringWriter();
-            JsonWriter jsonWriter = new JsonWriter(stringWriter);
-            jsonWriter.setLenient(true);
-            Streams.write(this, jsonWriter);
+            Json5Writer json5Writer = new Json5Writer(Json5Options.builder().build(), stringWriter);
+            json5Writer.write(this);
             return stringWriter.toString();
+
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        
-         */
-
-        // TODO: Complete toString()
-        throw new UnsupportedOperationException();
     }
 }
