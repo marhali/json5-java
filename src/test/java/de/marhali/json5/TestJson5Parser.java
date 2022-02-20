@@ -169,4 +169,13 @@ public class TestJson5Parser {
         assertEquals(-123e45, element.get(1).getAsNumber().doubleValue());
         assertEquals(123, element.get(2).getAsNumber().doubleValue());
     }
+
+    @Test
+    void nullLiteral() {
+        String payload = "[null,{'key':null}]";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        Json5Array element = Json5Parser.parseArray(lexer);
+        assertEquals(payload, element.toString(options));
+    }
 }
