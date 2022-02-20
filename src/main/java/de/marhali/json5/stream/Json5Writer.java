@@ -146,7 +146,7 @@ public final class Json5Writer {
             write(entry.getValue(), childIndent);
 
             if(options.isTrailingComma() || index < object.size() - 1) {
-                writer.append('\n');
+                writer.append(',');
             }
 
             index++;
