@@ -18,6 +18,7 @@ package de.marhali.json5;
 
 import de.marhali.json5.stream.Json5Lexer;
 import de.marhali.json5.stream.Json5Parser;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
