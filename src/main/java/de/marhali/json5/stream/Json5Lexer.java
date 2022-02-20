@@ -540,13 +540,6 @@ public class Json5Lexer {
             case '"':
             case '\'':
                 String string = nextString(n);
-
-//                TODO: This is still a json string, pass as Json5String, maybe add isInstant & getAsInstant in target
-//                if(options.isParseInstants() && options.isParseStringInstants())
-//                    try {
-//                        return Instant.parse(string);
-//                    } catch (Exception e) { }
-
                 return new Json5String(string);
             case '{':
                 back();
@@ -568,14 +561,6 @@ public class Json5Lexer {
 
         if (PATTERN_NUMBER_INTEGER.matcher(string).matches()) {
             BigInteger bigint = new BigInteger(string);
-
-//            TODO: This is still a json number, pass as Json5Number, maybe add isInstant & getAsInstant in target
-//            if(options.isParseInstants() && options.isParseUnixInstants())
-//                try {
-//                    long unix = bigint.longValueExact();
-//                    return Instant.ofEpochSecond(unix);
-//                } catch (Exception e) { }
-
             return new Json5Number(bigint);
         }
 
