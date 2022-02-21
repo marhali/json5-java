@@ -101,6 +101,12 @@ public class TestJson5Writer {
     }
 
     @Test
+    void hexadecimal() throws IOException {
+        json5Writer.write(new Json5Hexadecimal("0x100"));
+        assertEquals("0x100", stringWriter.toString());
+    }
+
+    @Test
     void number() throws IOException {
         json5Writer.write(new Json5Number(123));
         assertEquals("123", stringWriter.toString());
