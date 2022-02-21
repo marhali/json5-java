@@ -16,7 +16,7 @@ Don't worry the project is already in the Maven Central Repository. Just add the
 <dependencies>
     <dependency>
         <groupId>de.marhali</groupId>
-        <artifactId>json5-java</artifactId></artifactId>
+        <artifactId>json5-java</artifactId>
     </dependency>
 </dependencies>
 ```
