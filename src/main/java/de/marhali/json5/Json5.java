@@ -76,9 +76,9 @@ public final class Json5 {
     /**
      * Parses the data from the {@link InputStream} into a tree of {@link Json5Element}'s. There must be
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
+     * <p><b>Note:</b> The stream must be closed after operation</p>
      * @param in Can be any applicable {@link InputStream}
      * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
-     * @apiNote The stream must be closed after operation
      * @see #parse(Reader)
      */
     public Json5Element parse(InputStream in) {
@@ -89,9 +89,9 @@ public final class Json5 {
     /**
      * Parses the provided read-stream into a tree of {@link Json5Element}'s. There must be
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
+     * <p><b>Note:</b> The reader must be closed after operation</p>
      * @param reader Can be any applicable {@link Reader}
      * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
-     * @apiNote The reader must be closed after operation
      * @see Json5Parser#parse(Json5Lexer) 
      */
     public Json5Element parse(Reader reader) {
@@ -119,10 +119,10 @@ public final class Json5 {
 
     /**
      * Encodes the provided element into its character literal representation by using an output-stream.
+     * <p><b>Note:</b> The stream must be closed after operation ({@link OutputStream#close()})!</p>
      * @param element {@link Json5Element} to serialize
      * @param out Can be any applicable {@link OutputStream}
      * @throws IOException If an I/O error occurs
-     * @apiNote The stream must be closed after operation ({@link OutputStream#close()})!
      * @see #serialize(Json5Element, Writer)
      */
     public void serialize(Json5Element element, OutputStream out) throws IOException {
@@ -134,10 +134,10 @@ public final class Json5 {
 
     /**
      * Encodes the provided element into its character literal representation by using a write-stream.
+     * <p><b>Note:</b> The writer must be closed after operation ({@link Writer#close()})!</p>
      * @param element {@link Json5Element} to serialize
      * @param writer Can be any applicable {@link Writer}
      * @throws IOException If an I/O error occurs
-     * @apiNote The writer must be closed after operation ({@link Writer#close()})!
      * @see Json5Writer#write(Json5Element) 
      */
     public void serialize(Json5Element element, Writer writer) throws IOException {

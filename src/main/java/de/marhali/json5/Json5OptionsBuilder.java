@@ -37,6 +37,7 @@ public class Json5OptionsBuilder {
 
     /**
      * @see Json5Options#isAllowInvalidSurrogates()
+     * @return Current builder instance
      */
     public Json5OptionsBuilder allowInvalidSurrogate() {
         this.allowInvalidSurrogates = true;
@@ -45,6 +46,7 @@ public class Json5OptionsBuilder {
 
     /**
      * @see Json5Options#isQuoteSingle()
+     * @return Current builder instance
      */
     public Json5OptionsBuilder quoteSingle() {
         this.quoteSingle = true;
@@ -53,6 +55,7 @@ public class Json5OptionsBuilder {
 
     /**
      * @see Json5Options#isTrailingComma()
+     * @return Current builder instance
      */
     public Json5OptionsBuilder trailingComma() {
         this.trailingComma = true;
@@ -66,6 +69,7 @@ public class Json5OptionsBuilder {
      * any optional whitespace characters.
      * @see Json5Options#getIndentFactor()
      * @param indentFactor Indent factor to apply
+     * @return Current builder instance
      */
     public Json5OptionsBuilder indentFactor(int indentFactor) {
         this.indentFactor = indentFactor;
@@ -76,6 +80,7 @@ public class Json5OptionsBuilder {
      * Configures to output Json5 that fits in a page for pretty printing. This option only affects Json serialization.
      * Applies an indent factor of 2.
      * @see #indentFactor(int)
+     * @return Current builder instance
      */
     public Json5OptionsBuilder prettyPrinting() {
         this.indentFactor = 2;

@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 public abstract class Json5Element {
     /**
-     * Returns a deep copy of this element. Immutable elements like primitives
+     * @return A deep copy of this element. Immutable elements like primitives
      * and nulls are not copied.
      */
     public abstract Json5Element deepCopy();
