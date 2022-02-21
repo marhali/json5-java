@@ -74,6 +74,19 @@ public final class Json5 {
     }
 
     /**
+     * Parses the data from the {@link InputStream} into a tree of {@link Json5Element}'s. There must be
+     * a root element based on a {@link Json5Object} or {@link Json5Array}.
+     * @param in Can be any applicable {@link InputStream}
+     * @apiNote The stream must be closed after operation
+     * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
+     * @see #parse(Reader)
+     */
+    public Json5Element parse(InputStream in) {
+        Objects.requireNonNull(in);
+        return parse(new InputStreamReader(in));
+    }
+
+    /**
      * Parses the provided read-stream into a tree of {@link Json5Element}'s. There must be
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
      * @param reader Can be any applicable {@link Reader}
@@ -102,6 +115,21 @@ public final class Json5 {
         Json5Element element = this.parse(reader);
         reader.close();
         return element;
+    }
+
+    /**
+     * Encodes the provided element into its character literal representation by using an output-stream.
+     * @param element {@link Json5Element} to serialize
+     * @param out Can be any applicable {@link OutputStream}
+     * @throws IOException If an I/O error occurs
+     * @apiNote The stream must be closed after operation ({@link OutputStream#close()})!
+     * @see #serialize(Json5Element, Writer)
+     */
+    public void serialize(Json5Element element, OutputStream out) throws IOException {
+        Objects.requireNonNull(element);
+        Objects.requireNonNull(out);
+
+        serialize(element, new OutputStreamWriter(out));
     }
 
     /**
