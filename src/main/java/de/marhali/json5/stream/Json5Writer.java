@@ -189,7 +189,7 @@ public final class Json5Writer {
             }
         }
 
-        if(options.getIndentFactor() > 0) {
+        if(options.getIndentFactor() > 0 && !array.isEmpty()) {
             writer.append('\n').append(indent);
         }
 
