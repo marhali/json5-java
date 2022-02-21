@@ -3,7 +3,7 @@ name: Maven CI
 on: [push]
 
 jobs:
-  builds:
+  build:
     runs-on: ubuntu-latest
 
     steps:
