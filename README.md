@@ -1,4 +1,8 @@
-# json5-java
+# json5-java 
+[![Build](https://img.shields.io/github/workflow/status/marhali/json5-java/Maven%20CD)](https://github.com/marhali/json5-java/actions)
+[![JavaDoc](https://javadoc.io/badge2/de.marhali/json5-java/javadoc.svg)](https://javadoc.io/doc/de.marhali/json5-java)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/marhalide)
+
 This is a reference implementation of the [JSON5 standard](https://json5.org/) in Java 11+, 
 capable of parsing and serialization of JSON5 data.
 
@@ -6,7 +10,16 @@ This library is an enhanced version of [Synt4xErr0r4 / json5](https://github.com
 which provides a better full-fledged API inspired by the [GSON](https://github.com/google/gson) library.
 
 ## Download
-TBC
+Download the [latest release](https://github.com/marhali/json5-java/releases/latest) manually or add a Maven dependency. 
+Don't worry the project is already in the Maven Central Repository. Just add the following dependency:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>de.marhali</groupId>
+        <artifactId>json5-java</artifactId></artifactId>
+    </dependency>
+</dependencies>
+```
 
 ## Usage
 This library can be used by either configuring a [Json5](src/main/java/de/marhali/json5/Json5.java) 
@@ -66,6 +79,8 @@ try(OutputStream stream = ...) {
 ```
 
 ## Documentation
+Detailed javadoc documentation can be found at [javadoc.io](https://javadoc.io/doc/de.marhali/json5-java).
+
 ### Parsing & Serialization Options
 This library supports a few customizations to adjust the behaviour of parsing and serialization.
 For a detailed explanation see the [Json5Options](src/main/java/de/marhali/json5/Json5Options.java) class.
