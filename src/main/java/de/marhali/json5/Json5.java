@@ -77,8 +77,8 @@ public final class Json5 {
      * Parses the data from the {@link InputStream} into a tree of {@link Json5Element}'s. There must be
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
      * @param in Can be any applicable {@link InputStream}
-     * @apiNote The stream must be closed after operation
      * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
+     * @apiNote The stream must be closed after operation
      * @see #parse(Reader)
      */
     public Json5Element parse(InputStream in) {
