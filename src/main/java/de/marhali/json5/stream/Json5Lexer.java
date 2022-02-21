@@ -100,10 +100,9 @@ public class Json5Lexer {
 
     /**
      * Constructs a new lexer from a specific {@link Reader}.
-     * The reader must be closed after operation ({@link Reader#close()})!
-     *
      * @param reader  a reader.
      * @param options the options for lexing.
+     * @apiNote The reader must be closed after operation ({@link Reader#close()})!
      */
     public Json5Lexer(Reader reader, Json5Options options) {
         this.reader = Objects.requireNonNull(reader).markSupported() ? reader : new BufferedReader(reader);

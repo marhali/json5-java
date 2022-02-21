@@ -48,6 +48,7 @@ public final class Json5Writer {
      * Creates a new instance that writes a JSON5-encoded stream to {@code writer}.
      * @param options Parsing and serialization options
      * @param writer Output stream. For best performance, use a {@link java.io.BufferedWriter}
+     * @apiNote The writer must be closed after operation ({@link Writer#close()})!
      */
     public Json5Writer(Json5Options options, Writer writer) {
         this.options = Objects.requireNonNull(options);
