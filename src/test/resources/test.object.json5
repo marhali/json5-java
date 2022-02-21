@@ -1,0 +1,25 @@
+{
+  'str': "Lorem ipsum",
+  "bool": [
+    true,
+    false
+  ],
+  "numbers": {
+    "pos": 123,
+    "neg": -123,
+    "hex": 0x100,
+    "hex-neg": -0x100,
+    "nan": NaN,
+    "infinity": Infinity
+  },
+  "null": null,
+  'array': [],
+  'obj': {},
+  "arrayVariant": [
+    "Lorem ipsum",
+    [
+      "first",
+      "second"
+    ]
+  ]
+}
