@@ -21,4 +21,6 @@ jobs:
 
       - name: Publish Test-Report
         if: ${{ always() }}
-        uses: scacap/action-surefire-report@v1.0.5
+        uses: scacap/action-surefire-report@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
