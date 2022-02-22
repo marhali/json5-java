@@ -80,14 +80,14 @@ public final class Json5Writer {
         Objects.requireNonNull(element);
         Objects.requireNonNull(indent);
 
-        if(element.isJsonNull()) {
+        if(element.isJson5Null()) {
             writeNull();
-        } else if(element.isJsonObject()) {
-            writeObject(element.getAsJsonObject(), indent);
-        } else if(element.isJsonArray()) {
-            writeArray(element.getAsJsonArray(), indent);
-        } else if(element.isJsonPrimitive()) {
-            writePrimitive(element.getAsJsonPrimitive());
+        } else if(element.isJson5Object()) {
+            writeObject(element.getAsJson5Object(), indent);
+        } else if(element.isJson5Array()) {
+            writeArray(element.getAsJson5Array(), indent);
+        } else if(element.isJson5Primitive()) {
+            writePrimitive(element.getAsJson5Primitive());
         } else {
             throw new UnsupportedOperationException("Unknown json element with type class "
                     + element.getClass().getName());

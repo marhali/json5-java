@@ -53,7 +53,7 @@ public class TestJson5Array {
     @Test
     void notAArray() {
         Json5Element element = new Json5Object();
-        assertThrows(IllegalStateException.class, element::getAsJsonArray);
+        assertThrows(IllegalStateException.class, element::getAsJson5Array);
     }
 
     @Test

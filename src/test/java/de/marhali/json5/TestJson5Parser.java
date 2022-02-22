@@ -40,9 +40,9 @@ public class TestJson5Parser {
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));
-        assertTrue(element.get(0).getAsJsonPrimitive() instanceof Json5String);
-        assertTrue(element.get(1).getAsJsonPrimitive() instanceof Json5Number);
-        assertTrue(element.get(3).isJsonObject());
+        assertTrue(element.get(0).getAsJson5Primitive() instanceof Json5String);
+        assertTrue(element.get(1).getAsJson5Primitive() instanceof Json5Number);
+        assertTrue(element.get(3).isJson5Object());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class TestJson5Parser {
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals(payload, element.toString(options));
         assertEquals("value", element.get("key").getAsString());
-        assertTrue(element.get("array").isJsonArray());
+        assertTrue(element.get("array").isJson5Array());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class TestJson5Parser {
         Json5Options options = new Json5Options(true, true, false, 0);
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Element element = Json5Parser.parse(lexer);
-        assertTrue(element.isJsonArray());
+        assertTrue(element.isJson5Array());
         assertInstanceOf(Json5Array.class, element);
     }
 
@@ -72,7 +72,7 @@ public class TestJson5Parser {
         Json5Options options = new Json5Options(true, true, false, 0);
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Element element = Json5Parser.parse(lexer);
-        assertTrue(element.isJsonObject());
+        assertTrue(element.isJson5Object());
         assertInstanceOf(Json5Object.class, element);
     }
 
@@ -250,8 +250,8 @@ public class TestJson5Parser {
         assertEquals(123e+45, element.get(0).getAsNumber().doubleValue());
         assertEquals(-123e45, element.get(1).getAsNumber().doubleValue());
         assertEquals(123, element.get(2).getAsNumber().doubleValue());
-        assertTrue(element.get(0).isJsonPrimitive());
-        assertTrue(element.get(0).getAsJsonPrimitive().isNumber());
+        assertTrue(element.get(0).isJson5Primitive());
+        assertTrue(element.get(0).getAsJson5Primitive().isNumber());
         assertInstanceOf(Json5Number.class, element.get(2));
     }
 
@@ -262,7 +262,7 @@ public class TestJson5Parser {
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));
-        assertTrue(element.get(0).isJsonNull());
+        assertTrue(element.get(0).isJson5Null());
         assertInstanceOf(Json5Null.class, element.get(0));
     }
 }

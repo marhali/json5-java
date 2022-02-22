@@ -41,7 +41,7 @@ public class TestJson5Object {
     @Test
     void notAObject() {
         Json5Element element = new Json5Array();
-        assertThrows(IllegalStateException.class, element::getAsJsonObject);
+        assertThrows(IllegalStateException.class, element::getAsJson5Object);
     }
 
     @Test

@@ -60,10 +60,10 @@ public class TestJson5 {
         String jsonString = "{\n  'key': 'value',\n  'bool': true,\n  'hex': 0x100\n}";
         Json5Element element = json5.parse(jsonString);
 
-        assertTrue(element.isJsonObject());
-        assertEquals("value", element.getAsJsonObject().get("key").getAsString());
-        assertTrue(element.getAsJsonObject().get("bool").getAsBoolean());
-        assertInstanceOf(Json5Hexadecimal.class, element.getAsJsonObject().get("hex").getAsJsonPrimitive());
+        assertTrue(element.isJson5Object());
+        assertEquals("value", element.getAsJson5Object().get("key").getAsString());
+        assertTrue(element.getAsJson5Object().get("bool").getAsBoolean());
+        assertInstanceOf(Json5Hexadecimal.class, element.getAsJson5Object().get("hex").getAsJson5Primitive());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class TestJson5 {
     void ioArrayFile() throws IOException {
         try(InputStream stream = getTestResource("test.array.json5")) {
             Json5Element element = json5.parse(stream);
-            assertTrue(element.isJsonArray());
+            assertTrue(element.isJson5Array());
             assertEquals(getTestResourceContent("expect.array.json5"), json5.serialize(element));
         }
     }
@@ -92,7 +92,7 @@ public class TestJson5 {
     void ioObjectFile() throws IOException {
         try(InputStream stream = getTestResource("test.object.json5")) {
             Json5Element element = json5.parse(stream);
-            assertTrue(element.isJsonObject());
+            assertTrue(element.isJson5Object());
             assertEquals(getTestResourceContent("expect.object.json5"), json5.serialize(element));
         }
     }

@@ -45,7 +45,7 @@ public abstract class Json5Element {
      *
      * @return true if this element is of type {@link Json5Array}, false otherwise.
      */
-    public boolean isJsonArray() {
+    public boolean isJson5Array() {
         return this instanceof Json5Array;
     }
 
@@ -54,7 +54,7 @@ public abstract class Json5Element {
      *
      * @return true if this element is of type {@link Json5Object}, false otherwise.
      */
-    public boolean isJsonObject() {
+    public boolean isJson5Object() {
         return this instanceof Json5Object;
     }
 
@@ -63,7 +63,7 @@ public abstract class Json5Element {
      *
      * @return true if this element is of type {@link Json5Primitive}, false otherwise.
      */
-    public boolean isJsonPrimitive() {
+    public boolean isJson5Primitive() {
         return this instanceof Json5Primitive;
     }
 
@@ -72,21 +72,21 @@ public abstract class Json5Element {
      *
      * @return true if this element is of type {@link Json5Null}, false otherwise.
      */
-    public boolean isJsonNull() {
+    public boolean isJson5Null() {
         return this instanceof Json5Null;
     }
 
     /**
      * convenience method to get this element as a {@link Json5Object}. If the element is of some
      * other type, a {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #isJsonObject()}
+     * after ensuring that this element is of the desired type by calling {@link #isJson5Object()}
      * first.
      *
      * @return get this element as a {@link Json5Object}.
      * @throws IllegalStateException if the element is of another type.
      */
-    public Json5Object getAsJsonObject() {
-        if (isJsonObject()) {
+    public Json5Object getAsJson5Object() {
+        if (isJson5Object()) {
             return (Json5Object) this;
         }
         throw new IllegalStateException("Not a JSON Object: " + this);
@@ -95,14 +95,14 @@ public abstract class Json5Element {
     /**
      * convenience method to get this element as a {@link Json5Array}. If the element is of some
      * other type, a {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #isJsonArray()}
+     * after ensuring that this element is of the desired type by calling {@link #isJson5Array()}
      * first.
      *
      * @return get this element as a {@link Json5Array}.
      * @throws IllegalStateException if the element is of another type.
      */
-    public Json5Array getAsJsonArray() {
-        if (isJsonArray()) {
+    public Json5Array getAsJson5Array() {
+        if (isJson5Array()) {
             return (Json5Array) this;
         }
         throw new IllegalStateException("Not a JSON Array: " + this);
@@ -111,14 +111,14 @@ public abstract class Json5Element {
     /**
      * convenience method to get this element as a {@link Json5Primitive}. If the element is of some
      * other type, a {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #isJsonPrimitive()}
+     * after ensuring that this element is of the desired type by calling {@link #isJson5Primitive()}
      * first.
      *
      * @return get this element as a {@link Json5Primitive}.
      * @throws IllegalStateException if the element is of another type.
      */
-    public Json5Primitive getAsJsonPrimitive() {
-        if (isJsonPrimitive()) {
+    public Json5Primitive getAsJson5Primitive() {
+        if (isJson5Primitive()) {
             return (Json5Primitive) this;
         }
         throw new IllegalStateException("Not a JSON Primitive: " + this);
@@ -127,14 +127,14 @@ public abstract class Json5Element {
     /**
      * convenience method to get this element as a {@link Json5Null}. If the element is of some
      * other type, a {@link IllegalStateException} will result. Hence it is best to use this method
-     * after ensuring that this element is of the desired type by calling {@link #isJsonNull()}
+     * after ensuring that this element is of the desired type by calling {@link #isJson5Null()}
      * first.
      *
      * @return get this element as a {@link Json5Null}.
      * @throws IllegalStateException if the element is of another type.
      */
-    public Json5Null getAsJsonNull() {
-        if (isJsonNull()) {
+    public Json5Null getAsJson5Null() {
+        if (isJson5Null()) {
             return (Json5Null) this;
         }
         throw new IllegalStateException("Not a JSON Null: " + this);

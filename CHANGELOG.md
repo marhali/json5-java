@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2022-02-02
+### Changed
+- For consistency, all methods that return a Json5 data type have been refactored to use the same naming convention
+
 ## [1.0.1] - 2022-02-22
 ### Changed
 - Json5Parser#parse will return <kbd>null</kbd> if provided Json5Lexer does not contain any data
