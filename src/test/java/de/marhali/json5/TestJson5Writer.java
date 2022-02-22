@@ -46,6 +46,17 @@ public class TestJson5Writer {
     }
 
     @Test
+    void quoteEmpty() {
+        assertEquals("''", json5Writer.quote(null));
+        assertEquals("''", json5Writer.quote(""));
+    }
+
+    @Test
+    void quoteEscape() {
+        assertEquals("'\\\\n'", json5Writer.quote("\\n"));
+    }
+
+    @Test
     void array() throws IOException {
         Json5Array array = new Json5Array();
         array.add(true);
