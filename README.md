@@ -11,7 +11,7 @@ This library is an enhanced version of [Synt4xErr0r4 / json5](https://github.com
 which provides a better full-fledged API inspired by the [GSON](https://github.com/google/gson) library.
 
 ## Download
-Download the [latest release](https://github.com/marhali/json5-java/releases/latest) manually or add a Maven dependency. 
+Download the [latest release](https://search.maven.org/artifact/de.marhali/json5-java) manually or add a Maven dependency. 
 Don't worry the project is already in the Maven Central Repository. Just add the following configuration:
 ```xml
 <dependencies>
