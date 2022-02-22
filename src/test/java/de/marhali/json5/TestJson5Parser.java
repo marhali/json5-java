@@ -133,6 +133,22 @@ public class TestJson5Parser {
     }
 
     @Test
+    void notAObject() {
+        String payload = "[]";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
+    }
+
+    @Test
+    void notAArray() {
+        String payload = "{}";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseArray(lexer));
+    }
+
+    @Test
     void unknownControlCharacter() {
         String payload = "|";
         Json5Options options = new Json5Options(true, true, false, 0);
