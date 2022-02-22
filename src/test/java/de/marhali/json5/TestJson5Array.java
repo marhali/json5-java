@@ -51,6 +51,12 @@ public class TestJson5Array {
     }
 
     @Test
+    void notAArray() {
+        Json5Element element = new Json5Object();
+        assertThrows(IllegalStateException.class, element::getAsJsonArray);
+    }
+
+    @Test
     void add() {
         Json5Array array = new Json5Array();
         array.add("Lorem ipsum");

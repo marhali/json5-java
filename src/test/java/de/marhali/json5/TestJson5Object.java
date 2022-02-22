@@ -18,6 +18,8 @@ package de.marhali.json5;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,6 +36,12 @@ public class TestJson5Object {
         element.remove("str");
         assertEquals(0, element.size());
         assertFalse(element.has("str"));
+    }
+
+    @Test
+    void notAObject() {
+        Json5Element element = new Json5Array();
+        assertThrows(IllegalStateException.class, element::getAsJsonObject);
     }
 
     @Test
@@ -58,8 +66,12 @@ public class TestJson5Object {
         Json5Object object = new Json5Object();
         object.addProperty("char", 'c');
         object.add("obj", new Json5Object());
+        object.add("array", new Json5Array());
 
         assertInstanceOf(Json5String.class, object.get("char"));
         assertEquals(new Json5Object(), object.getAsJson5Object("obj"));
+        assertEquals(Set.of("char", "obj", "array"), object.keySet());
+        assertInstanceOf(Json5Array.class, object.getAsJson5Array("array"));
+        assertEquals(0, object.getAsJson5Array("array").size());
     }
 }
