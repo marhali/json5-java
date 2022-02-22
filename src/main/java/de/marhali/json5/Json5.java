@@ -78,7 +78,7 @@ public final class Json5 {
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
      * <p><b>Note:</b> The stream must be closed after operation</p>
      * @param in Can be any applicable {@link InputStream}
-     * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
+     * @return Parsed json5 tree. Can be {@code null} if the provided stream does not contain any data
      * @see #parse(Reader)
      */
     public Json5Element parse(InputStream in) {
@@ -91,7 +91,7 @@ public final class Json5 {
      * a root element based on a {@link Json5Object} or {@link Json5Array}.
      * <p><b>Note:</b> The reader must be closed after operation</p>
      * @param reader Can be any applicable {@link Reader}
-     * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
+     * @return Parsed json5 tree. Can be {@code null} if the provided stream does not contain any data
      * @see Json5Parser#parse(Json5Lexer) 
      */
     public Json5Element parse(Reader reader) {
@@ -105,7 +105,7 @@ public final class Json5 {
      * Parses the provided json5-encoded {@link String} into a parse tree of {@link Json5Element}'s.
      * There must be a root element based on a {@link Json5Object} or {@link Json5Array}.
      * @param jsonString Json5 encoded {@link String}
-     * @return Parsed json5 tree. It is either a {@link Json5Object} or {@link Json5Array}
+     * @return Parsed json5 tree. Can be {@code null} if the provided {@link String} is empty
      * @see #parse(Reader) 
      */
     public Json5Element parse(String jsonString) {
