@@ -141,11 +141,51 @@ public class TestJson5Parser {
     }
 
     @Test
+    void incompleteObject() {
+        String payload = "{";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
+    }
+
+    @Test
     void notAArray() {
         String payload = "{}";
         Json5Options options = new Json5Options(true, true, false, 0);
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseArray(lexer));
+    }
+
+    @Test
+    void incompleteArray() {
+        String payload = "[";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseArray(lexer));
+    }
+
+    @Test
+    void duplicateObjectKeys() {
+        String payload = "{'key':'value','key':'value'}";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
+    }
+
+    @Test
+    void noDivider() {
+        String payload = "{'key''value'}";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
+    }
+
+    @Test
+    void noComma() {
+        String payload = "{'key':'value''otherKey':'value'}";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
 
     @Test
