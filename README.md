@@ -12,12 +12,13 @@ which provides a better full-fledged API inspired by the [GSON](https://github.c
 
 ## Download
 Download the [latest release](https://github.com/marhali/json5-java/releases/latest) manually or add a Maven dependency. 
-Don't worry the project is already in the Maven Central Repository. Just add the following dependency:
+Don't worry the project is already in the Maven Central Repository. Just add the following configuration:
 ```xml
 <dependencies>
     <dependency>
         <groupId>de.marhali</groupId>
         <artifactId>json5-java</artifactId>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
