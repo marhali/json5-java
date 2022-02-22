@@ -18,7 +18,7 @@ Don't worry the project is already in the Maven Central Repository. Just add the
     <dependency>
         <groupId>de.marhali</groupId>
         <artifactId>json5-java</artifactId>
-        <version>1.0.1</version>
+        <version>2.0.0</version>
     </dependency>
 </dependencies>
 ```
