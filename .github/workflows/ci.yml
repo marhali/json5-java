@@ -24,3 +24,10 @@ jobs:
         uses: scacap/action-surefire-report@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: ./site/jacoco/
+          fail_ci_if_error: true
+          verbose: true
