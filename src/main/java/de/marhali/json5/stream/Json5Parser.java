@@ -45,8 +45,8 @@ public final class Json5Parser {
     /**
      * Parses the specified {@link Json5Lexer lexer} into a parse tree of {@link Json5Element}'s.
      * Thereby it does not matter if the provided root element is an array or object.
-     * @param lexer Tokenized json5 data.
-     * @return a parse tree of {@link Json5Element}'s corresponding to the specified JSON5.
+     * @param lexer Tokenized json5 data
+     * @return a parse tree of {@link Json5Element}'s corresponding to the specified JSON5 or {@code null} if lexer does not provide any data
      */
     public static Json5Element parse(Json5Lexer lexer) {
         Objects.requireNonNull(lexer);
@@ -58,6 +58,8 @@ public final class Json5Parser {
             case '[':
                 lexer.back();
                 return parseArray(lexer);
+            case 0:
+                return null;
             default:
                 throw lexer.syntaxError("Unknown or unexpected control character");
         }

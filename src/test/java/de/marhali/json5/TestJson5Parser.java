@@ -133,6 +133,22 @@ public class TestJson5Parser {
     }
 
     @Test
+    void unknownControlCharacter() {
+        String payload = "|";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertThrows(Json5Exception.class, () -> Json5Parser.parse(lexer));
+    }
+
+    @Test
+    void empty() {
+        String payload = "";
+        Json5Options options = new Json5Options(true, true, false, 0);
+        Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
+        assertNull(Json5Parser.parse(lexer));
+    }
+
+    @Test
     void memberNames() {
         String payload = "{ $Lorem\\u0041_Ipsum123指事字: 0 }";
         Json5Options options = new Json5Options(true, true, false, 0);

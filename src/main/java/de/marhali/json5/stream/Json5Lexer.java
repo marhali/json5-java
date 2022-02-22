@@ -253,8 +253,12 @@ public class Json5Lexer {
      */
     public char nextClean() {
         while (true) {
-            if (!more())
+            if (!more()) {
+                if(index == -1) { // Empty stream
+                    return 0;
+                }
                 throw syntaxError("Unexpected end of data");
+            }
 
             char n = next();
 
