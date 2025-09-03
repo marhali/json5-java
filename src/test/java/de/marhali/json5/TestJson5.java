@@ -45,7 +45,10 @@ public class TestJson5 {
                 buf.write((byte) result);
             }
 
-            return buf.toString(StandardCharsets.UTF_8);
+             return Optional.ofNullable(buf.toString(StandardCharsets.UTF_8))
+                .map(s->s.replace("\r\n","\n"))
+                .map(s->s.replace("\r","\n"))
+                .orElse(null);
         }
     }
 
