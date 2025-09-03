@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-09-03
+### Changed
+- Update dependencies
+### Fixed
+- Fix unit tests on Windows (#18) - thanks to @Zim-Inn
+
 ## [2.0.0] - 2022-02-02
 ### Changed
 - For consistency, all methods that return a Json5 data type have been refactored to use the same naming convention
