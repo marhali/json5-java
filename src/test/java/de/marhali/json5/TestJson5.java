@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,10 +46,10 @@ public class TestJson5 {
                 buf.write((byte) result);
             }
 
-             return Optional.ofNullable(buf.toString(StandardCharsets.UTF_8))
-                .map(s->s.replace("\r\n","\n"))
-                .map(s->s.replace("\r","\n"))
-                .orElse(null);
+            return Optional.ofNullable(buf.toString(StandardCharsets.UTF_8))
+                    .map(s->s.replace("\r\n","\n"))
+                    .map(s->s.replace("\r","\n"))
+                    .orElse(null);
         }
     }
 
