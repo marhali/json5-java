@@ -1,0 +1,25 @@
+{
+  cards_apd_business_scenario_t: {
+    '背景数据': {
+      target_table_name: 'cards_ar_invoice_info_t',
+      append_table_name: 'cards_ar_inv_info_apd_t',
+      append_tmp_table_name: 'cards_ar_inv_info_apd_tmp',
+      append_effective_type: 'APPEND_PRIORITY',
+      business_scenario_zh_name: '清关发票补录Jiuli',
+      business_scenario_en_name: 'Append customs invoice No',
+      description: '清关发票数据补录',
+      enabled_flag: 'Y',
+      delete_flag: 'N',
+      creation_date: '2025-03-07 13:39:16.000000',
+      last_updated_by: 174022309561388,
+      last_update_date: '2025-05-06 20:09:57.436000',
+      tenant_id: '11111111111111111111111111111111'
+    },
+    '重点验证': [
+      {
+        created_by: '${created}'
+      }
+    ],
+    '隔离策略': {}
+  }
+}

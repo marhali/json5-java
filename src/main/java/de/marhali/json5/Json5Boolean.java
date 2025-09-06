@@ -25,4 +25,16 @@ public final class Json5Boolean extends Json5Primitive {
     public Json5Boolean(Boolean value) {
         super(value);
     }
+
+    @Override
+    public Json5Element deepCopy() {
+        Json5Boolean o = new Json5Boolean((Boolean) value);
+        o.setComment(getComment());
+        return o;
+    }
+
+    @Override
+    public Json5Element noCommentCopy() {
+        return new  Json5Boolean((Boolean) value);
+    }
 }

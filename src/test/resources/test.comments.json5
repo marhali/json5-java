@@ -1,0 +1,21 @@
+{
+  //The master switch for the feature
+  "enabled": true,
+  // A list of network ports
+  "ports": [
+    // Standard port
+    8001,
+       // Alternate port
+    8002,
+        /**
+         * Admin port
+         * Do not expose publicly
+         */
+    9999
+  ],
+  // User configuration
+  "user": {
+    // The user's login name
+    "name": "gemini"
+  }
+}

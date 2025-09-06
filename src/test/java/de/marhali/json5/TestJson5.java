@@ -16,13 +16,20 @@
 
 package de.marhali.json5;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
 
 /**
  * Unit tests for the {@link Json5} core class.
@@ -30,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marcel Haßlinger
  */
 public class TestJson5 {
-
     private Json5 json5;
 
     private InputStream getTestResource(String fileName) {
@@ -45,14 +51,14 @@ public class TestJson5 {
                 buf.write((byte) result);
             }
 
-            return buf.toString(StandardCharsets.UTF_8);
+            return Optional.ofNullable(buf.toString(StandardCharsets.UTF_8)).map(s -> s.replace("\r\n", "\n")).map(
+                s -> s.replace("\r", "\n")).orElse(null);
         }
     }
 
     @BeforeEach
     void setup() {
-        json5 = Json5.builder(builder ->
-                builder.allowInvalidSurrogate().quoteSingle().indentFactor(2).build());
+        json5 = Json5.builder(builder -> builder.allowInvalidSurrogate().quoteSingle().indentFactor(2).build());
     }
 
     @Test
@@ -71,7 +77,7 @@ public class TestJson5 {
         Json5Object element = new Json5Object();
         element.addProperty("key", "value");
         element.addProperty("bool", true);
-        element.add("hex",  new Json5Hexadecimal("0x100"));
+        element.add("hex", new Json5Hexadecimal("0x100"));
 
         String jsonString = json5.serialize(element);
         String expect = "{\n  'key': 'value',\n  'bool': true,\n  'hex': 0x100\n}";
@@ -81,7 +87,7 @@ public class TestJson5 {
 
     @Test
     void ioArrayFile() throws IOException {
-        try(InputStream stream = getTestResource("test.array.json5")) {
+        try (InputStream stream = getTestResource("test.array.json5")) {
             Json5Element element = json5.parse(stream);
             assertTrue(element.isJson5Array());
             assertEquals(getTestResourceContent("expect.array.json5"), json5.serialize(element));
@@ -90,10 +96,47 @@ public class TestJson5 {
 
     @Test
     void ioObjectFile() throws IOException {
-        try(InputStream stream = getTestResource("test.object.json5")) {
+        try (InputStream stream = getTestResource("test.object.json5")) {
             Json5Element element = json5.parse(stream);
             assertTrue(element.isJson5Object());
             assertEquals(getTestResourceContent("expect.object.json5"), json5.serialize(element));
         }
+    }
+
+    @Test
+    void testIsEmptyBehavior() {
+        // Json5Null
+        Json5Element nullValue = new Json5Null();
+        assertTrue(nullValue.isEmpty(), "Json5Null 应该被视为空");
+
+        // 空 Json5Object
+        Json5Object emptyObj = new Json5Object();
+        assertTrue(emptyObj.isEmpty(), "空 Json5Object 应该被视为空");
+
+        // 非空 Json5Object
+        Json5Object nonEmptyObj = new Json5Object();
+        nonEmptyObj.add("key", new Json5String("value"));
+        assertFalse(nonEmptyObj.isEmpty(), "非空 Json5Object 不应被视为空");
+
+        // 空 Json5Array
+        Json5Array emptyArr = new Json5Array();
+        assertTrue(emptyArr.isEmpty(), "空 Json5Array 应该被视为空");
+
+        // 非空 Json5Array
+        Json5Array nonEmptyArr = new Json5Array();
+        nonEmptyArr.add(new Json5String("item"));
+        assertFalse(nonEmptyArr.isEmpty(), "非空 Json5Array 不应被视为空");
+
+        // 空 Json5String
+        Json5String emptyStr = new Json5String("");
+        assertTrue(emptyStr.isEmpty(), "空字符串应该被视为空");
+
+        // 非空 Json5String
+        Json5String nonEmptyStr = new Json5String("hello");
+        assertFalse(nonEmptyStr.isEmpty(), "非空字符串不应被视为空");
+
+        // 其它类型（例如 Json5Number）
+        Json5Element number = new Json5Number(42); // 假设你有这个类型
+        assertFalse(number.isEmpty(), "Json5Number 不应被视为空");
     }
 }

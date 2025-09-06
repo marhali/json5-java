@@ -28,7 +28,15 @@ public class Json5OptionsBuilder {
     private boolean quoteSingle = false;
     private boolean trailingComma = false;
 
+    //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+    private boolean quoteless = false;
+    //</editor-fold>
+
     private int indentFactor = 0;
+
+    private boolean readComments = false;
+
+    private boolean writeComments = true;
 
     /**
      * Constructs a new builder instance.
@@ -87,10 +95,42 @@ public class Json5OptionsBuilder {
         return this;
     }
 
+    //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+    /**
+     * Configures to output {@link Json5Object} keys without quotes. This option only affects Json serialization.
+     * This option has no effect if the key starts or ends with a digit, or if the key contains non-alphanumeric characters.
+     *
+     * @return Current builder instance
+     */
+    public Json5OptionsBuilder quoteless() {
+        this.quoteless = true;
+        return this;
+    }
+    //</editor-fold>
+
+    /**
+     * Configures to read comments from the source. This option only affects Json parsing.
+     * @return Current builder instance
+     */
+    public Json5OptionsBuilder readComments() {
+        this.readComments = true;
+        return this;
+    }
+
+    /**
+     * 设置json5Options序列化时不写注释
+     */
+    public Json5OptionsBuilder notWriteComments() {
+        this.writeComments = false;
+        return this;
+    }
     /**
      * @return Configured {@link Json5Options}
      */
     public Json5Options build() {
-        return new Json5Options(allowInvalidSurrogates, quoteSingle, trailingComma, indentFactor);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        return new Json5Options(allowInvalidSurrogates, quoteSingle, trailingComma, indentFactor, quoteless,
+            readComments,writeComments);
+        //</editor-fold>
     }
 }

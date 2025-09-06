@@ -31,14 +31,13 @@ import java.io.StringWriter;
  *
  * @author Marcel Haßlinger
  */
-public class TestJson5Writer {
-
+public class TestJson5WriterQuoteless {
     //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
-    private final Json5Options options
-            = new Json5Options(true, true, false, 0, false);
+    private final Json5Options options = new Json5Options(true, true, false, 0, true);
     //</editor-fold>
 
     private StringWriter stringWriter;
+
     private Json5Writer json5Writer;
 
     @BeforeEach
@@ -65,12 +64,14 @@ public class TestJson5Writer {
         array.add(123);
         array.add(new Json5Hexadecimal("0x100"));
         array.add("Lorem ipsum");
-        array.add(new Json5Null());
+        array.add(Json5Null.INSTANCE);
         array.add(new Json5Object());
 
         json5Writer.write(array);
 
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
         assertEquals("[true,123,0x100,'Lorem ipsum',null,{}]", stringWriter.toString());
+        //</editor-fold>
     }
 
     @Test
@@ -85,10 +86,10 @@ public class TestJson5Writer {
 
         json5Writer.write(object);
 
-        assertEquals("{'bool':false,'num':123,'hex':0x100,'str':'Lorem ipsum','nulled':null,'array':[]}",
-                stringWriter.toString());
+        assertEquals("{bool:false,num:123,hex:0x100,str:'Lorem ipsum',nulled:null,array:[]}", stringWriter.toString());
     }
 
+    //<editor-fold desc="Modified by Ultreon (added support for quoteless and comments)">
     @Test
     void objectWithComments() throws IOException {
         Json5Object object = new Json5Object();
@@ -103,11 +104,11 @@ public class TestJson5Writer {
         json5Writer.write(object);
 
         assertEquals("""
-{'bool':false,'num':123,'hex':0x100,'str':'Lorem ipsum',// Null on purpose
-'nulled':null,'array':[]}\
-                     """,
-                stringWriter.toString());
+                     {bool:false,num:123,hex:0x100,str:'Lorem ipsum',// Null on purpose
+                     nulled:null,array:[]}\
+                     """, stringWriter.toString());
     }
+    //</editor-fold>
 
     @Test
     void nullLiteral() throws IOException {
@@ -162,9 +163,9 @@ public class TestJson5Writer {
     @Test
     void escapeChars() throws IOException {
         Json5Array array = new Json5Array();
-        array.add("\\\n\r\f\b\t\u000Bዺ\u000b");
+        array.add("\\\n\r\f\b\t\u000B\u12fa\u000b");
         json5Writer.write(array);
-        assertEquals("['\\\\\\n\\r\\f\\b\\t\\vዺ\\v']", stringWriter.toString());
+        assertEquals("['\\\\\\n\\r\\f\\b\\t\\v\u12fa\\v']", stringWriter.toString());
         // Cannot test \x7F
     }
 }

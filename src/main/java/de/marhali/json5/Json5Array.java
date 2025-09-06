@@ -32,6 +32,7 @@ import java.util.List;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
+@SuppressWarnings("unused")
 public final class Json5Array extends Json5Element implements Iterable<Json5Element> {
     private final List<Json5Element> elements;
 
@@ -56,9 +57,199 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
             for (Json5Element element : elements) {
                 result.add(element.deepCopy());
             }
+            result.setComment(this.getComment());
             return result;
         }
         return new Json5Array();
+    }
+
+    @Override
+    public Json5Element noCommentCopy() {
+        if (!elements.isEmpty()) {
+            Json5Array result = new Json5Array(elements.size());
+            for (Json5Element element : elements) {
+                result.add(element.noCommentCopy());
+            }
+            return result;
+        }
+        return new Json5Array();
+    }
+
+    /**
+     * Returns true if the array is empty
+     *
+     * @return true if the array is empty
+     */
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    /**
+     * convenience method to get this array as a boolean if it contains a single element.
+     *
+     * @return get this element as a boolean if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid boolean.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public boolean getAsBoolean() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsBoolean();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a {@link Number} if it contains a single element.
+     *
+     * @return get this element as a number if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid Number.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public Number getAsNumber() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsNumber();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a {@link String} if it contains a single element.
+     *
+     * @return get this element as a String if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid String.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public String getAsString() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsString();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a double if it contains a single element.
+     *
+     * @return get this element as a double if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid double.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public double getAsDouble() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsDouble();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a float if it contains a single element.
+     *
+     * @return get this element as a float if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid float.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public float getAsFloat() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsFloat();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a long if it contains a single element.
+     *
+     * @return get this element as a long if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid long.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public long getAsLong() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsLong();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as an integer if it contains a single element.
+     *
+     * @return get this element as an integer if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid integer.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public int getAsInt() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsInt();
+        }
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public byte getAsByte() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsByte();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a {@link BigDecimal} if it contains a single element.
+     *
+     * @return get this element as a {@link BigDecimal} if it is single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
+     * @throws NumberFormatException if the element at index 0 is not a valid {@link BigDecimal}.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public BigDecimal getAsBigDecimal() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsBigDecimal();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a {@link BigInteger} if it contains a single element.
+     *
+     * @return get this element as a {@link BigInteger} if it is single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
+     * @throws NumberFormatException if the element at index 0 is not a valid {@link BigInteger}.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public BigInteger getAsBigInteger() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsBigInteger();
+        }
+        throw new IllegalStateException();
+    }
+
+    /**
+     * convenience method to get this array as a primitive short if it contains a single element.
+     *
+     * @return get this element as a primitive short if it is a single element array.
+     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
+     * is not a valid short.
+     * @throws IllegalStateException if the array has more than one element.
+     */
+    @Override
+    public short getAsShort() {
+        if (elements.size() == 1) {
+            return elements.get(0).getAsShort();
+        }
+        throw new IllegalStateException();
     }
 
     /**
@@ -120,7 +311,8 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
 
     /**
      * Replaces the element at the specified position in this array with the specified element.
-     *   Element can be null.
+     * Element can be null.
+     *
      * @param index index of the element to replace
      * @param element element to be stored at the specified position
      * @return the element previously at the specified position
@@ -133,6 +325,7 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
     /**
      * Removes the first occurrence of the specified element from this array, if it is present.
      * If the array does not contain the element, it is unchanged.
+     *
      * @param element element to be removed from this array, if present
      * @return true if this array contained the specified element, false otherwise
      */
@@ -144,18 +337,21 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * Removes the element at the specified position in this array. Shifts any subsequent elements
      * to the left (subtracts one from their indices). Returns the element that was removed from
      * the array.
+     *
      * @param index index the index of the element to be removed
      * @return the element previously at the specified position
      * @throws IndexOutOfBoundsException if the specified index is outside the array bounds
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Json5Element remove(int index) {
         return elements.remove(index);
     }
 
     /**
      * Returns true if this array contains the specified element.
-     * @return true if this array contains the specified element.
+     *
      * @param element whose presence in this array is to be tested
+     * @return true if this array contains the specified element.
      */
     public boolean contains(Json5Element element) {
         return elements.contains(element);
@@ -171,12 +367,48 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
     }
 
     /**
-     * Returns true if the array is empty
+     * 将本对象的非空注释覆盖合并到目标对象
+     * 取两者长度较短者作为最大遍历长度
+     * 要求目标对象的同索引子元素应与本子元素具备类型一致性
      *
-     * @return true if the array is empty
+     * @param target 目标对象
      */
-    public boolean isEmpty() {
-        return elements.isEmpty();
+    public void mergeCommentTo(Json5Array target) {
+        super.copyCommentTo(target);
+        if (!elements.isEmpty()) {
+            int loop = Math.min(elements.size(), target.size());
+            for (int i = 0; i < loop; i++) {
+                Json5Element element = this.get(i);
+                if (!element.hasComment()) {
+                    continue;
+                }
+                if (element instanceof Json5Primitive) {
+                    element.copyCommentTo(target.get(i));
+                } else if (element instanceof Json5Array) {
+                    ((Json5Array) element).mergeCommentTo((Json5Array) target.get(i));
+                } else if (element instanceof Json5Object) {
+                    ((Json5Object) element).mergeCommentTo((Json5Object) target.get(i));
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the comment for an element.
+     * comment字段不会参与equals 和hashCode
+     *
+     * @param index index of elements
+     * @param comment comment for the member
+     */
+    public void setComment(int index, String comment) {
+        Json5Element element = get(index);
+        if (element instanceof Json5Null) {
+            Json5Null json5Null = new Json5Null();
+            json5Null.setComment(comment);
+            elements.set(index, json5Null);
+        } else {
+            element.setComment(comment);
+        }
     }
 
     /**
@@ -201,181 +433,26 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
         return elements.get(i);
     }
 
-    /**
-     * convenience method to get this array as a {@link Number} if it contains a single element.
-     *
-     * @return get this element as a number if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid Number.
-     * @throws IllegalStateException if the array has more than one element.
-     */
     @Override
-    public Number getAsNumber() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsNumber();
-        }
-        throw new IllegalStateException();
+    public int hashCode() {
+        return elements.hashCode();
     }
 
     /**
-     * convenience method to get this array as a {@link String} if it contains a single element.
+     * 暂不支持直接转POJO对象,请使用toStandardString然后使用其它反序列化框架处理
+     * @see Json5Element#toString(Json5Options)
+     * @see Json5Element#toStandardString
      *
-     * @return get this element as a String if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid String.
-     * @throws IllegalStateException if the array has more than one element.
+     * @param clazz The class of the POJO to convert to.
+     * @param <T> The type of the POJO.
+     * @return An list instance of the specified POJO class, populated with data from this Json5Array.
      */
-    @Override
-    public String getAsString() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsString();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a double if it contains a single element.
-     *
-     * @return get this element as a double if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid double.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public double getAsDouble() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsDouble();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a {@link BigDecimal} if it contains a single element.
-     *
-     * @return get this element as a {@link BigDecimal} if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
-     * @throws NumberFormatException if the element at index 0 is not a valid {@link BigDecimal}.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public BigDecimal getAsBigDecimal() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsBigDecimal();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a {@link BigInteger} if it contains a single element.
-     *
-     * @return get this element as a {@link BigInteger} if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive}.
-     * @throws NumberFormatException if the element at index 0 is not a valid {@link BigInteger}.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public BigInteger getAsBigInteger() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsBigInteger();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a float if it contains a single element.
-     *
-     * @return get this element as a float if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid float.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public float getAsFloat() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsFloat();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a long if it contains a single element.
-     *
-     * @return get this element as a long if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid long.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public long getAsLong() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsLong();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as an integer if it contains a single element.
-     *
-     * @return get this element as an integer if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid integer.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public int getAsInt() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsInt();
-        }
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public byte getAsByte() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsByte();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a primitive short if it contains a single element.
-     *
-     * @return get this element as a primitive short if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid short.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public short getAsShort() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsShort();
-        }
-        throw new IllegalStateException();
-    }
-
-    /**
-     * convenience method to get this array as a boolean if it contains a single element.
-     *
-     * @return get this element as a boolean if it is single element array.
-     * @throws ClassCastException if the element in the array is of not a {@link Json5Primitive} and
-     * is not a valid boolean.
-     * @throws IllegalStateException if the array has more than one element.
-     */
-    @Override
-    public boolean getAsBoolean() {
-        if (elements.size() == 1) {
-            return elements.get(0).getAsBoolean();
-        }
-        throw new IllegalStateException();
+    public <T> List<T> toPojoList(Class<T> clazz) throws Exception {
+        throw new Exception("不支持的操作!");
     }
 
     @Override
     public boolean equals(Object o) {
         return (o == this) || (o instanceof Json5Array && ((Json5Array) o).elements.equals(elements));
-    }
-
-    @Override
-    public int hashCode() {
-        return elements.hashCode();
     }
 }

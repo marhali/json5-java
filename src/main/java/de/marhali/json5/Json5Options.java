@@ -61,11 +61,43 @@ public class Json5Options {
      */
     private final int indentFactor;
 
-    public Json5Options(boolean allowInvalidSurrogates, boolean quoteSingle, boolean trailingComma, int indentFactor) {
+    //<editor-fold desc="Modified by Ultreon (added quoteless parameter)">
+    /**
+     * Whether keys of {@link Json5Object} should be without quotes.
+     * This is unless starting or ending with a digit.
+     */
+    private final boolean quoteless;
+
+    /**
+     * parse时是否读取注释
+     */
+    private final boolean readComments;
+
+    /**
+     * write时是否写注释
+     */
+    private final boolean writeComments;
+
+    //</editor-fold>
+    public Json5Options(boolean allowInvalidSurrogates, boolean quoteSingle, boolean trailingComma, int indentFactor, boolean quoteless, boolean readComments,
+        boolean writeComments) {
         this.allowInvalidSurrogates = allowInvalidSurrogates;
         this.quoteSingle = quoteSingle;
         this.trailingComma = trailingComma;
         this.indentFactor = Math.max(0, indentFactor);
+        this.quoteless = quoteless;
+        this.readComments = readComments;
+        this.writeComments = writeComments;
+    }
+
+    public Json5Options(boolean allowInvalidSurrogates, boolean quoteSingle, boolean trailingComma, int indentFactor, boolean quoteless) {
+        this.allowInvalidSurrogates = allowInvalidSurrogates;
+        this.quoteSingle = quoteSingle;
+        this.trailingComma = trailingComma;
+        this.indentFactor = Math.max(0, indentFactor);
+        this.quoteless = quoteless;
+        this.readComments = false;
+        this.writeComments = true;
     }
 
     public boolean isAllowInvalidSurrogates() {
@@ -76,6 +108,10 @@ public class Json5Options {
         return quoteSingle;
     }
 
+    public boolean isWriteComments() {
+        return writeComments;
+    }
+
     public boolean isTrailingComma() {
         return trailingComma;
     }
@@ -83,4 +119,14 @@ public class Json5Options {
     public int getIndentFactor() {
         return indentFactor;
     }
+
+    public boolean isReadComments() {
+        return readComments;
+    }
+
+    //<editor-fold desc="Modified by Ultreon (added quoteless getter)">
+    public boolean isQuoteless() {
+        return quoteless;
+    }
+    //</editor-fold>
 }

@@ -16,11 +16,14 @@
 
 package de.marhali.json5;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link Json5Object}
@@ -28,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Marcel Haßlinger
  */
 public class TestJson5Object {
-
     @Test
     void remove() {
         Json5Object element = new Json5Object();

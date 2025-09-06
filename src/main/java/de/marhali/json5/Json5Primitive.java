@@ -33,9 +33,15 @@ import java.util.Objects;
  * @author Joel Leitch
  */
 public abstract class Json5Primitive extends Json5Element {
+    protected final Object value;
+
+    public Json5Primitive(Object value) {
+        this.value = Objects.requireNonNull(value);
+    }
 
     /**
      * Quick creator for a primitive with boolean value.
+     *
      * @param value Boolean value to apply.
      * @return Corresponding primitive with provided value.
      */
@@ -45,6 +51,7 @@ public abstract class Json5Primitive extends Json5Element {
 
     /**
      * Quick creator for a primitive with number value.
+     *
      * @param value Number value to apply.
      * @return Corresponding primitive with provided value.
      */
@@ -55,6 +62,7 @@ public abstract class Json5Primitive extends Json5Element {
     /**
      * Quick creator for a primitive with string value.
      * Set hexadecimal to true to receive a {@link Json5Hexadecimal}.
+     *
      * @param value String value to apply.
      * @param hexadecimal Is the provided value a hex string literal?
      * @return Corresponding primitive with provided value.
@@ -65,34 +73,12 @@ public abstract class Json5Primitive extends Json5Element {
 
     /**
      * Quick creator for a primitive with string value.
+     *
      * @param value String value to apply.
      * @return Corresponding primitive with provided value.
      */
     public static Json5Primitive of(String value) {
         return new Json5String(value);
-    }
-
-    protected final Object value;
-
-    public Json5Primitive(Object value) {
-        this.value = Objects.requireNonNull(value);
-    }
-
-    /**
-     * Returns the same value as primitives are immutable.
-     */
-    @Override
-    public Json5Element deepCopy() {
-        return this;
-    }
-
-    /**
-     * Check whether this primitive contains a boolean value.
-     *
-     * @return true if this primitive contains a boolean value, false otherwise.
-     */
-    public boolean isBoolean() {
-        return value instanceof Boolean;
     }
 
     /**
@@ -110,15 +96,6 @@ public abstract class Json5Primitive extends Json5Element {
     }
 
     /**
-     * Check whether this primitive contains a Number.
-     *
-     * @return true if this primitive contains a Number, false otherwise.
-     */
-    public boolean isNumber() {
-        return value instanceof Number;
-    }
-
-    /**
      * convenience method to get this element as a Number.
      *
      * @return get this element as a Number.
@@ -127,15 +104,6 @@ public abstract class Json5Primitive extends Json5Element {
     @Override
     public Number getAsNumber() {
         return value instanceof String ? new LazilyParsedNumber((String) value) : (Number) value;
-    }
-
-    /**
-     * Check whether this primitive contains a String value.
-     *
-     * @return true if this primitive contains a String value, false otherwise.
-     */
-    public boolean isString() {
-        return value instanceof String;
     }
 
     /**
@@ -166,29 +134,6 @@ public abstract class Json5Primitive extends Json5Element {
     }
 
     /**
-     * convenience method to get this element as a {@link BigDecimal}.
-     *
-     * @return get this element as a {@link BigDecimal}.
-     * @throws NumberFormatException if the value contained is not a valid {@link BigDecimal}.
-     */
-    @Override
-    public BigDecimal getAsBigDecimal() {
-        return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
-    }
-
-    /**
-     * convenience method to get this element as a {@link BigInteger}.
-     *
-     * @return get this element as a {@link BigInteger}.
-     * @throws NumberFormatException if the value contained is not a valid {@link BigInteger}.
-     */
-    @Override
-    public BigInteger getAsBigInteger() {
-        return value instanceof BigInteger ?
-                (BigInteger) value : new BigInteger(value.toString());
-    }
-
-    /**
      * convenience method to get this element as a float.
      *
      * @return get this element as a float.
@@ -211,17 +156,6 @@ public abstract class Json5Primitive extends Json5Element {
     }
 
     /**
-     * convenience method to get this element as a primitive short.
-     *
-     * @return get this element as a primitive short.
-     * @throws NumberFormatException if the value contained is not a valid short value.
-     */
-    @Override
-    public short getAsShort() {
-        return isNumber() ? getAsNumber().shortValue() : Short.parseShort(getAsString());
-    }
-
-    /**
      * convenience method to get this element as a primitive integer.
      *
      * @return get this element as a primitive integer.
@@ -237,12 +171,72 @@ public abstract class Json5Primitive extends Json5Element {
         return isNumber() ? getAsNumber().byteValue() : Byte.parseByte(getAsString());
     }
 
+    /**
+     * convenience method to get this element as a {@link BigDecimal}.
+     *
+     * @return get this element as a {@link BigDecimal}.
+     * @throws NumberFormatException if the value contained is not a valid {@link BigDecimal}.
+     */
+    @Override
+    public BigDecimal getAsBigDecimal() {
+        return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
+    }
+
+    /**
+     * convenience method to get this element as a {@link BigInteger}.
+     *
+     * @return get this element as a {@link BigInteger}.
+     * @throws NumberFormatException if the value contained is not a valid {@link BigInteger}.
+     */
+    @Override
+    public BigInteger getAsBigInteger() {
+        return value instanceof BigInteger ? (BigInteger) value : new BigInteger(value.toString());
+    }
+
+    /**
+     * convenience method to get this element as a primitive short.
+     *
+     * @return get this element as a primitive short.
+     * @throws NumberFormatException if the value contained is not a valid short value.
+     */
+    @Override
+    public short getAsShort() {
+        return isNumber() ? getAsNumber().shortValue() : Short.parseShort(getAsString());
+    }
+
+    /**
+     * Check whether this primitive contains a boolean value.
+     *
+     * @return true if this primitive contains a boolean value, false otherwise.
+     */
+    public boolean isBoolean() {
+        return value instanceof Boolean;
+    }
+
+    /**
+     * Check whether this primitive contains a Number.
+     *
+     * @return true if this primitive contains a Number, false otherwise.
+     */
+    public boolean isNumber() {
+        return value instanceof Number;
+    }
+
+    /**
+     * Check whether this primitive contains a String value.
+     *
+     * @return true if this primitive contains a String value, false otherwise.
+     */
+    public boolean isString() {
+        return value instanceof String;
+    }
+
     @Override
     public int hashCode() {
         if (value == null) {
             return 31;
         }
-        // Using recommended hashing algorithm from Effective Java for longs and doubles
+        // Using the recommended hashing algorithm from Effective Java for longs and doubles
         if (isIntegral(this)) {
             long value = getAsNumber().longValue();
             return (int) (value ^ (value >>> 32));
@@ -262,7 +256,7 @@ public abstract class Json5Primitive extends Json5Element {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        Json5Primitive other = (Json5Primitive)obj;
+        Json5Primitive other = (Json5Primitive) obj;
         if (value == null) {
             return other.value == null;
         }
@@ -287,7 +281,7 @@ public abstract class Json5Primitive extends Json5Element {
         if (primitive.value instanceof Number) {
             Number number = (Number) primitive.value;
             return number instanceof BigInteger || number instanceof Long || number instanceof Integer
-                    || number instanceof Short || number instanceof Byte;
+                || number instanceof Short || number instanceof Byte;
         }
         return false;
     }

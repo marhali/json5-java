@@ -25,15 +25,25 @@
 
 package de.marhali.json5.stream;
 
-import de.marhali.json5.*;
+import de.marhali.json5.Json5Array;
+import de.marhali.json5.Json5Boolean;
+import de.marhali.json5.Json5Element;
+import de.marhali.json5.Json5Hexadecimal;
+import de.marhali.json5.Json5Null;
+import de.marhali.json5.Json5Number;
+import de.marhali.json5.Json5Object;
+import de.marhali.json5.Json5Options;
+import de.marhali.json5.Json5String;
 import de.marhali.json5.exception.Json5Exception;
 
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is a lexer to convert the provided data into tokens according to the json5 specification.
@@ -44,26 +54,21 @@ import java.util.regex.Pattern;
  * @author SyntaxError404
  * @see <a href="https://spec.json5.org/">Json5 Standard</a>.
  */
+@SuppressWarnings("HardcodedLineSeparator")
 public class Json5Lexer {
-
-    private static final Pattern PATTERN_BOOLEAN = Pattern.compile(
-            "true|false"
-    );
+    private static final Pattern PATTERN_BOOLEAN = Pattern.compile("true|false");
 
     private static final Pattern PATTERN_NUMBER_FLOAT = Pattern.compile(
-            "[+-]?((0|[1-9]\\d*)(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?"
-    );
-    private static final Pattern PATTERN_NUMBER_INTEGER = Pattern.compile(
-            "[+-]?(0|[1-9]\\d*)"
-    );
-    private static final Pattern PATTERN_NUMBER_HEX = Pattern.compile(
-            "[+-]?0[xX][0-9a-fA-F]+"
-    );
-    private static final Pattern PATTERN_NUMBER_SPECIAL = Pattern.compile(
-            "[+-]?(Infinity|NaN)"
-    );
+        "[+-]?((0|[1-9]\\d*)(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?");
+
+    private static final Pattern PATTERN_NUMBER_INTEGER = Pattern.compile("[+-]?(0|[1-9]\\d*)");
+
+    private static final Pattern PATTERN_NUMBER_HEX = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
+
+    private static final Pattern PATTERN_NUMBER_SPECIAL = Pattern.compile("[+-]?(Infinity|NaN)");
 
     private final Reader reader;
+
     private final Json5Options options;
 
     /**
@@ -80,10 +85,12 @@ public class Json5Lexer {
      * the absolute position in the string
      */
     private long index;
+
     /**
      * the relative position in the line
      */
     private long character;
+
     /**
      * the line number
      */
@@ -93,15 +100,19 @@ public class Json5Lexer {
      * the previous character
      */
     private char previous;
+
     /**
      * the current character
      */
     private char current;
 
+    private StringBuilder lastComment;
+
     /**
      * Constructs a new lexer from a specific {@link Reader}.
      * <p><b>Note:</b> The reader must be closed after operation ({@link Reader#close()})!</p>
-     * @param reader  a reader.
+     *
+     * @param reader a reader.
      * @param options the options for lexing.
      */
     public Json5Lexer(Reader reader, Json5Options options) {
@@ -117,13 +128,22 @@ public class Json5Lexer {
 
         previous = 0;
         current = 0;
+        lastComment = null;
     }
 
-    private boolean more() {
-        if (back || eof)
-            return back && !eof;
-
-        return peek() > 0;
+    /**
+     * Returns the last comment that was read and clears it.
+     * The parser will call this before parsing a new element.
+     *
+     * @return The captured comment content, or null if no comment was found.
+     */
+    public String consumeComment() {
+        if (this.lastComment == null) {
+            return null;
+        }
+        String comment = this.lastComment.toString();
+        this.lastComment = null;
+        return comment;
     }
 
     /**
@@ -131,118 +151,6 @@ public class Json5Lexer {
      */
     public void back() {
         back = true;
-    }
-
-    private char peek() {
-        if (eof)
-            return 0;
-
-        int c;
-
-        try {
-            reader.mark(1);
-
-            c = reader.read();
-
-            reader.reset();
-        } catch (Exception e) {
-            throw syntaxError("Could not peek from source", e);
-        }
-
-        return c == -1 ? 0 : (char) c;
-    }
-
-    private char next() {
-        if (back) {
-            back = false;
-            return current;
-        }
-
-        int c;
-
-        try {
-            c = reader.read();
-        } catch (Exception e) {
-            throw syntaxError("Could not read from source", e);
-        }
-
-        if (c < 0) {
-            eof = true;
-            return 0;
-        }
-
-        previous = current;
-        current = (char) c;
-
-        index++;
-
-        if (isLineTerminator(current) && (current != '\n' || (current == '\n' && previous != '\r'))) {
-            line++;
-            character = 0;
-        } else character++;
-
-        return current;
-    }
-
-    // https://262.ecma-international.org/5.1/#sec-7.3
-    private boolean isLineTerminator(char c) {
-        switch (c) {
-            case '\n':
-            case '\r':
-            case 0x2028:
-            case 0x2029:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    // https://spec.json5.org/#white-space
-    private boolean isWhitespace(char c) {
-        switch (c) {
-            case '\t':
-            case '\n':
-            case 0x0B: // Vertical Tab
-            case '\f':
-            case '\r':
-            case ' ':
-            case 0xA0: // No-break space
-            case 0x2028: // Line separator
-            case 0x2029: // Paragraph separator
-            case 0xFEFF: // Byte Order Mark
-                return true;
-            default:
-                // Unicode category "Zs" (space separators)
-                if (Character.getType(c) == Character.SPACE_SEPARATOR)
-                    return true;
-
-                return false;
-        }
-    }
-
-    // https://262.ecma-international.org/5.1/#sec-9.3.1
-    private boolean isDecimalDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
-    private void nextMultiLineComment() {
-        while (true) {
-            char n = next();
-
-            if (n == '*' && peek() == '/') {
-                next();
-                return;
-            }
-        }
-    }
-
-    private void nextSingleLineComment() {
-        while (true) {
-            char n = next();
-
-            if (isLineTerminator(n) || n == 0)
-                return;
-        }
     }
 
     /**
@@ -254,7 +162,7 @@ public class Json5Lexer {
     public char nextClean() {
         while (true) {
             if (!more()) {
-                if(index == -1) { // Empty stream
+                if (index == -1) { // Empty stream
                     return 0;
                 }
                 throw syntaxError("Unexpected end of data");
@@ -266,218 +174,18 @@ public class Json5Lexer {
                 char p = peek();
 
                 if (p == '*') {
+                    // 跳过peek的字符
                     next();
                     nextMultiLineComment();
                 } else if (p == '/') {
+                    // 跳过peek的字符
                     next();
+                    // 再跳过//后紧邻的第一个空格
+                    if (peek() == ' ') next();
                     nextSingleLineComment();
-                } else return n;
-            } else if (!isWhitespace(n))
-                return n;
+                } else { return n; }
+            } else if (!isWhitespace(n)) { return n; }
         }
-    }
-
-    private String nextCleanTo(String delimiters) {
-        StringBuilder result = new StringBuilder();
-
-        while (true) {
-            if (!more())
-                throw syntaxError("Unexpected end of data");
-
-            char n = nextClean();
-
-            if (delimiters.indexOf(n) > -1 || isWhitespace(n)) {
-                back();
-                break;
-            }
-
-            result.append(n);
-        }
-
-        return result.toString();
-    }
-
-    private int dehex(char c) {
-        if (c >= '0' && c <= '9')
-            return c - '0';
-
-        if (c >= 'a' && c <= 'f')
-            return c - 'a' + 0xA;
-
-        if (c >= 'A' && c <= 'F')
-            return c - 'A' + 0xA;
-
-        return -1;
-    }
-
-    private char unicodeEscape(boolean member, boolean part) {
-        String where = member ? "key" : "string";
-
-        String value = "";
-        int codepoint = 0;
-
-        for (int i = 0; i < 4; ++i) {
-            char n = next();
-            value += n;
-
-            int hex = dehex(n);
-
-            if (hex == -1)
-                throw syntaxError("Illegal unicode escape sequence '\\u" + value + "' in " + where);
-
-            codepoint |= hex << ((3 - i) << 2);
-        }
-
-        if (member && !isMemberNameChar((char) codepoint, part))
-            throw syntaxError("Illegal unicode escape sequence '\\u" + value + "' in key");
-
-        return (char) codepoint;
-    }
-
-    private void checkSurrogate(char hi, char lo) {
-        if (options.isAllowInvalidSurrogates())
-            return;
-
-        if (!Character.isHighSurrogate(hi) || !Character.isLowSurrogate(lo))
-            return;
-
-        if (!Character.isSurrogatePair(hi, lo))
-            throw syntaxError(String.format(
-                    "Invalid surrogate pair: U+%04X and U+%04X",
-                    hi, lo
-            ));
-    }
-
-    // https://spec.json5.org/#prod-JSON5String
-    private String nextString(char quote) {
-        StringBuilder result = new StringBuilder();
-
-        String value;
-        int codepoint;
-
-        char n = 0;
-        char prev;
-
-        while (true) {
-            if (!more())
-                throw syntaxError("Unexpected end of data");
-
-            prev = n;
-            n = next();
-
-            if (n == quote)
-                break;
-
-            if (isLineTerminator(n) && n != 0x2028 && n != 0x2029)
-                throw syntaxError("Unescaped line terminator in string");
-
-            if (n == '\\') {
-                n = next();
-
-                if (isLineTerminator(n)) {
-                    if (n == '\r' && peek() == '\n')
-                        next();
-
-                    // escaped line terminator/ line continuation
-                    continue;
-                } else switch (n) {
-                    case '\'':
-                    case '"':
-                    case '\\':
-                        result.append(n);
-                        continue;
-                    case 'b':
-                        result.append('\b');
-                        continue;
-                    case 'f':
-                        result.append('\f');
-                        continue;
-                    case 'n':
-                        result.append('\n');
-                        continue;
-                    case 'r':
-                        result.append('\r');
-                        continue;
-                    case 't':
-                        result.append('\t');
-                        continue;
-                    case 'v': // Vertical Tab
-                        result.append((char) 0x0B);
-                        continue;
-
-                    case '0': // NUL
-                        char p = peek();
-
-                        if (isDecimalDigit(p))
-                            throw syntaxError("Illegal escape sequence '\\0" + p + "'");
-
-                        result.append((char) 0);
-                        continue;
-
-                    case 'x': // Hex escape sequence
-                        value = "";
-                        codepoint = 0;
-
-                        for (int i = 0; i < 2; ++i) {
-                            n = next();
-                            value += n;
-
-                            int hex = dehex(n);
-
-                            if (hex == -1)
-                                throw syntaxError("Illegal hex escape sequence '\\x" + value + "' in string");
-
-                            codepoint |= hex << ((1 - i) << 2);
-                        }
-
-                        n = (char) codepoint;
-                        break;
-
-                    case 'u': // Unicode escape sequence
-                        n = unicodeEscape(false, false);
-                        break;
-
-                    default:
-                        if (isDecimalDigit(n))
-                            throw syntaxError("Illegal escape sequence '\\" + n + "'");
-
-                        break;
-                }
-            }
-
-            checkSurrogate(prev, n);
-
-            result.append(n);
-        }
-
-        return result.toString();
-    }
-
-    private boolean isMemberNameChar(char n, boolean part) {
-        if (n == '$' || n == '_' || n == 0x200C || n == 0x200D)
-            return true;
-
-        int type = Character.getType(n);
-
-        switch (type) {
-            case Character.UPPERCASE_LETTER:
-            case Character.LOWERCASE_LETTER:
-            case Character.TITLECASE_LETTER:
-            case Character.MODIFIER_LETTER:
-            case Character.OTHER_LETTER:
-            case Character.LETTER_NUMBER:
-                return true;
-
-            case Character.NON_SPACING_MARK:
-            case Character.COMBINING_SPACING_MARK:
-            case Character.DECIMAL_DIGIT_NUMBER:
-            case Character.CONNECTOR_PUNCTUATION:
-                if (part)
-                    return true;
-                break;
-        }
-
-        return false;
     }
 
     /**
@@ -492,15 +200,13 @@ public class Json5Lexer {
         char prev;
         char n = next();
 
-        if (n == '"' || n == '\'')
-            return nextString(n);
+        if (n == '"' || n == '\'') { return nextString(n); }
 
         back();
         n = 0;
 
         while (true) {
-            if (!more())
-                throw syntaxError("Unexpected end of data");
+            if (!more()) { throw syntaxError("Unexpected end of data"); }
 
             boolean part = result.length() > 0;
 
@@ -510,8 +216,7 @@ public class Json5Lexer {
             if (n == '\\') { // unicode escape sequence
                 n = next();
 
-                if (n != 'u')
-                    throw syntaxError("Illegal escape sequence '\\" + n + "' in key");
+                if (n != 'u') { throw syntaxError("Illegal escape sequence '\\" + n + "' in key"); }
 
                 n = unicodeEscape(true, part);
             } else if (!isMemberNameChar(n, part)) {
@@ -524,8 +229,7 @@ public class Json5Lexer {
             result.append(n);
         }
 
-        if (result.length() == 0)
-            throw syntaxError("Empty key");
+        if (result.length() == 0) { throw syntaxError("Empty key"); }
 
         return result.toString();
     }
@@ -556,19 +260,16 @@ public class Json5Lexer {
 
         String string = nextCleanTo(",]}");
 
-        if (string.equals("null"))
-            return Json5Null.INSTANCE;
+        if (string.equals("null")) { return Json5Null.INSTANCE; }
 
-        if (PATTERN_BOOLEAN.matcher(string).matches())
-            return new Json5Boolean(string.equals("true"));
+        if (PATTERN_BOOLEAN.matcher(string).matches()) { return new Json5Boolean(string.equals("true")); }
 
         if (PATTERN_NUMBER_INTEGER.matcher(string).matches()) {
             BigInteger bigint = new BigInteger(string);
             return new Json5Number(bigint);
         }
 
-        if (PATTERN_NUMBER_FLOAT.matcher(string).matches())
-            return new Json5Number(new BigDecimal(string));
+        if (PATTERN_NUMBER_FLOAT.matcher(string).matches()) { return new Json5Number(new BigDecimal(string)); }
 
         if (PATTERN_NUMBER_SPECIAL.matcher(string).matches()) {
             String special;
@@ -612,11 +313,370 @@ public class Json5Lexer {
         throw new Json5Exception("Illegal value '" + string + "'");
     }
 
+    @Override
+    public String toString() {
+        return " at index " + index + " [character " + character + " in line " + line + "]";
+    }
+
+    private boolean more() {
+        if (back || eof) { return back && !eof; }
+
+        return peek() > 0;
+    }
+
+    private char peek() {
+        if (eof) { return 0; }
+
+        int c;
+
+        try {
+            reader.mark(1);
+
+            c = reader.read();
+
+            reader.reset();
+        } catch (Exception e) {
+            throw syntaxError("Could not peek from source", e);
+        }
+
+        return c == -1 ? 0 : (char) c;
+    }
+
+    private char next() {
+        if (back) {
+            back = false;
+            return current;
+        }
+
+        int c;
+
+        try {
+            c = reader.read();
+        } catch (Exception e) {
+            throw syntaxError("Could not read from source", e);
+        }
+
+        if (c < 0) {
+            eof = true;
+            return 0;
+        }
+
+        previous = current;
+        current = (char) c;
+
+        index++;
+
+        if (isLineTerminator(current) && (current != '\n' || (current == '\n' && previous != '\r'))) {
+            line++;
+            character = 0;
+        } else { character++; }
+
+        return current;
+    }
+
+    // https://262.ecma-international.org/5.1/#sec-7.3
+    private boolean isLineTerminator(char c) {
+        switch (c) {
+            case '\n':
+            case '\r':
+            case 0x2028:
+            case 0x2029:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    // https://spec.json5.org/#white-space
+    private boolean isWhitespace(char c) {
+        switch (c) {
+            case '\t':
+            case '\n':
+            case 0x0B: // Vertical Tab
+            case '\f':
+            case '\r':
+            case ' ':
+            case 0xA0: // No-break space
+            case 0x2028: // Line separator
+            case 0x2029: // Paragraph separator
+            case 0xFEFF: // Byte Order Mark
+                return true;
+            default:
+                // Unicode category "Zs" (space separators)
+                if (Character.getType(c) == Character.SPACE_SEPARATOR) { return true; }
+
+                return false;
+        }
+    }
+
+    // https://262.ecma-international.org/5.1/#sec-9.3.1
+    private boolean isDecimalDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private void nextMultiLineComment() {
+        if (!options.isReadComments()) {
+            while (true) {
+                char n = next();
+                if (n == 0) {
+                    throw syntaxError("Unterminated multi-line comment");
+                }
+                if (n == '*' && peek() == '/') {
+                    next();
+                    return;
+                }
+            }
+        }
+
+        if (this.lastComment == null) {
+            this.lastComment = new StringBuilder();
+        } else if (!this.lastComment.isEmpty()) {
+            this.lastComment.append("\n");
+        }
+
+        this.lastComment.append("/*");
+        while (true) {
+            char n = next();
+            if (n == 0) {
+                throw syntaxError("Unterminated multi-line comment");
+            }
+            this.lastComment.append(n);
+            if (n == '*' && peek() == '/') {
+                this.lastComment.append(next());
+                break;
+            }
+        }
+
+        String comment = this.lastComment.toString();
+        String[] lines = comment.split("\r?\n");
+        String normalizedComment = Arrays.stream(lines).skip(1).map(String::strip).map(l -> " " + l).collect(
+            Collectors.joining("\n"));
+        normalizedComment = lines[0] +"\n" + normalizedComment;
+        this.lastComment = new StringBuilder(normalizedComment);
+    }
+
+    private void nextSingleLineComment() {
+        if (!options.isReadComments()) {
+            while (true) {
+                char n = next();
+                if (isLineTerminator(n) || n == 0) {
+                    return;
+                }
+            }
+        }
+
+        if (this.lastComment == null) {
+            this.lastComment = new StringBuilder();
+        } else if (!this.lastComment.isEmpty()) {
+            this.lastComment.append("\n");
+        }
+
+        while (true) {
+            char n = next();
+            if (isLineTerminator(n) || n == 0) {
+                return;
+            }
+            this.lastComment.append(n);
+        }
+    }
+
+    private String nextCleanTo(String delimiters) {
+        StringBuilder result = new StringBuilder();
+
+        while (true) {
+            if (!more()) { throw syntaxError("Unexpected end of data"); }
+
+            char n = nextClean();
+
+            if (delimiters.indexOf(n) > -1 || isWhitespace(n)) {
+                back();
+                break;
+            }
+
+            result.append(n);
+        }
+
+        return result.toString();
+    }
+
+    private int dehex(char c) {
+        if (c >= '0' && c <= '9') { return c - '0'; }
+
+        if (c >= 'a' && c <= 'f') { return c - 'a' + 0xA; }
+
+        if (c >= 'A' && c <= 'F') { return c - 'A' + 0xA; }
+
+        return -1;
+    }
+
+    private char unicodeEscape(boolean member, boolean part) {
+        String where = member ? "key" : "string";
+
+        String value = "";
+        int codepoint = 0;
+
+        for (int i = 0; i < 4; ++i) {
+            char n = next();
+            value += n;
+
+            int hex = dehex(n);
+
+            if (hex == -1) { throw syntaxError("Illegal unicode escape sequence '\\u" + value + "' in " + where); }
+
+            codepoint |= hex << ((3 - i) << 2);
+        }
+
+        if (member && !isMemberNameChar((char) codepoint, part)) {
+            throw syntaxError("Illegal unicode escape sequence '\\u" + value + "' in key");
+        }
+
+        return (char) codepoint;
+    }
+
+    private void checkSurrogate(char hi, char lo) {
+        if (options.isAllowInvalidSurrogates()) { return; }
+
+        if (!Character.isHighSurrogate(hi) || !Character.isLowSurrogate(lo)) { return; }
+
+        if (!Character.isSurrogatePair(hi, lo)) {
+            throw syntaxError(String.format("Invalid surrogate pair: U+%04X and U+%04X", hi, lo));
+        }
+    }
+
+    // https://spec.json5.org/#prod-JSON5String
+    private String nextString(char quote) {
+        StringBuilder result = new StringBuilder();
+
+        String value;
+        int codepoint;
+
+        char n = 0;
+        char prev;
+
+        while (true) {
+            if (!more()) { throw syntaxError("Unexpected end of data"); }
+
+            prev = n;
+            n = next();
+
+            if (n == quote) { break; }
+
+            if (isLineTerminator(n) && n != 0x2028 && n != 0x2029) {
+                throw syntaxError("Unescaped line terminator in string");
+            }
+
+            if (n == '\\') {
+                n = next();
+
+                if (isLineTerminator(n)) {
+                    if (n == '\r' && peek() == '\n') { next(); }
+
+                    // escaped line terminator/ line continuation
+                    continue;
+                } else {
+                    switch (n) {
+                        case '\'':
+                        case '"':
+                        case '\\':
+                            result.append(n);
+                            continue;
+                        case 'b':
+                            result.append('\b');
+                            continue;
+                        case 'f':
+                            result.append('\f');
+                            continue;
+                        case 'n':
+                            result.append('\n');
+                            continue;
+                        case 'r':
+                            result.append('\r');
+                            continue;
+                        case 't':
+                            result.append('\t');
+                            continue;
+                        case 'v': // Vertical Tab
+                            result.append((char) 0x0B);
+                            continue;
+
+                        case '0': // NUL
+                            char p = peek();
+
+                            if (isDecimalDigit(p)) { throw syntaxError("Illegal escape sequence '\0" + p + "'"); }
+
+                            result.append((char) 0);
+                            continue;
+
+                        case 'x': // Hex escape sequence
+                            value = "";
+                            codepoint = 0;
+
+                            for (int i = 0; i < 2; ++i) {
+                                n = next();
+                                value += n;
+
+                                int hex = dehex(n);
+
+                                if (hex == -1) {
+                                    throw syntaxError("Illegal hex escape sequence '\\x" + value + "' in string");
+                                }
+
+                                codepoint |= hex << ((1 - i) << 2);
+                            }
+
+                            n = (char) codepoint;
+                            break;
+
+                        case 'u': // Unicode escape sequence
+                            n = unicodeEscape(false, false);
+                            break;
+
+                        default:
+                            if (isDecimalDigit(n)) { throw syntaxError("Illegal escape sequence '\\" + n + "'"); }
+
+                            break;
+                    }
+                }
+            }
+
+            checkSurrogate(prev, n);
+
+            result.append(n);
+        }
+
+        return result.toString();
+    }
+
+    private boolean isMemberNameChar(char n, boolean part) {
+        if (n == '$' || n == '_' || n == 0x200C || n == 0x200D) { return true; }
+
+        int type = Character.getType(n);
+
+        switch (type) {
+            case Character.UPPERCASE_LETTER:
+            case Character.LOWERCASE_LETTER:
+            case Character.TITLECASE_LETTER:
+            case Character.MODIFIER_LETTER:
+            case Character.OTHER_LETTER:
+            case Character.LETTER_NUMBER:
+                return true;
+
+            case Character.NON_SPACING_MARK:
+            case Character.COMBINING_SPACING_MARK:
+            case Character.DECIMAL_DIGIT_NUMBER:
+            case Character.CONNECTOR_PUNCTUATION:
+                if (part) { return true; }
+                break;
+        }
+
+        return false;
+    }
+
     /**
      * Constructs a new JSONException with a detail message and a causing exception
      *
      * @param message the detail message
-     * @param cause   the causing exception
+     * @param cause the causing exception
      * @return a JSONException
      */
     protected Json5Exception syntaxError(String message, Throwable cause) {
@@ -631,10 +691,5 @@ public class Json5Lexer {
      */
     protected Json5Exception syntaxError(String message) {
         return new Json5Exception(message + this);
-    }
-
-    @Override
-    public String toString() {
-        return " at index " + index + " [character " + character + " in line " + line + "]";
     }
 }

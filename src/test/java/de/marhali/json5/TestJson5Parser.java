@@ -36,7 +36,9 @@ public class TestJson5Parser {
     @Test
     void array() {
         String payload = "['hello',1,'two',{'key':'value'}]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));
@@ -48,7 +50,10 @@ public class TestJson5Parser {
     @Test
     void object() {
         String payload = "{'key':'value','array':['first','second'],'nested':{'key':'value'}}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals(payload, element.toString(options));
@@ -59,7 +64,9 @@ public class TestJson5Parser {
     @Test
     void determineArrayType() {
         String payload = "['first','second']";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Element element = Json5Parser.parse(lexer);
         assertTrue(element.isJson5Array());
@@ -69,7 +76,9 @@ public class TestJson5Parser {
     @Test
     void determineObjectType() {
         String payload = "{'key':'value'}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Element element = Json5Parser.parse(lexer);
         assertTrue(element.isJson5Object());
@@ -79,7 +88,9 @@ public class TestJson5Parser {
     @Test
     void hexadecimal() {
         String payload = "{'key':0x100}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals(payload, element.toString(options));
@@ -89,7 +100,9 @@ public class TestJson5Parser {
     @Test
     void insideQuotes() {
         String payload = "[\"example\",'other']";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals("['example','other']", element.toString(options));
@@ -98,7 +111,9 @@ public class TestJson5Parser {
     @Test
     void mixedQuotes() {
         String payload = "{ a: \"Test \\' 123\" }";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals("Test ' 123", element.get("a").getAsString());
@@ -107,7 +122,9 @@ public class TestJson5Parser {
     @Test
     void escapeChars() {
         String payload = "{ a: \"\\n\\r\\f\\b\\t\\v\\0\u12fa\\x7F\" }";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertEquals("\n\r\f\b\t\u000B\0\u12fa\u007F", element.get("a").getAsString());
@@ -117,7 +134,9 @@ public class TestJson5Parser {
     @Test
     void specialNumbers() {
         String payload = "[+NaN,NaN,-NaN,+Infinity,Infinity,-Infinity]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals("[NaN,NaN,NaN,Infinity,Infinity,-Infinity]", element.toString(options));
@@ -127,7 +146,9 @@ public class TestJson5Parser {
     @Test
     void malformed() {
         String payload = "[10}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parse(lexer));
     }
@@ -135,7 +156,9 @@ public class TestJson5Parser {
     @Test
     void notAObject() {
         String payload = "[]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
@@ -143,7 +166,9 @@ public class TestJson5Parser {
     @Test
     void incompleteObject() {
         String payload = "{";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
@@ -151,7 +176,9 @@ public class TestJson5Parser {
     @Test
     void notAArray() {
         String payload = "{}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseArray(lexer));
     }
@@ -159,7 +186,9 @@ public class TestJson5Parser {
     @Test
     void incompleteArray() {
         String payload = "[";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseArray(lexer));
     }
@@ -167,7 +196,9 @@ public class TestJson5Parser {
     @Test
     void duplicateObjectKeys() {
         String payload = "{'key':'value','key':'value'}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
@@ -175,7 +206,9 @@ public class TestJson5Parser {
     @Test
     void noDivider() {
         String payload = "{'key''value'}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
@@ -183,7 +216,9 @@ public class TestJson5Parser {
     @Test
     void noComma() {
         String payload = "{'key':'value''otherKey':'value'}";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parseObject(lexer));
     }
@@ -191,7 +226,9 @@ public class TestJson5Parser {
     @Test
     void unknownControlCharacter() {
         String payload = "|";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertThrows(Json5Exception.class, () -> Json5Parser.parse(lexer));
     }
@@ -199,7 +236,9 @@ public class TestJson5Parser {
     @Test
     void empty() {
         String payload = "";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         assertNull(Json5Parser.parse(lexer));
     }
@@ -207,7 +246,9 @@ public class TestJson5Parser {
     @Test
     void memberNames() {
         String payload = "{ $Lorem\\u0041_Ipsum123指事字: 0 }";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertTrue(element.has("$LoremA_Ipsum123指事字"));
@@ -216,7 +257,9 @@ public class TestJson5Parser {
     @Test
     void multiComments() {
         String payload = "/**/{/**/a/**/:/**/'b'/**/}/**/";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertTrue(element.has("a"));
@@ -225,7 +268,9 @@ public class TestJson5Parser {
     @Test
     void singleComments() {
         String payload = "// test\n{ // lorem ipsum\n a: 'b'\n// test\n}// test";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Object element = Json5Parser.parseObject(lexer);
         assertTrue(element.has("a"));
@@ -234,7 +279,9 @@ public class TestJson5Parser {
     @Test
     void booleans() {
         String payload = "[true,false]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));
@@ -244,7 +291,9 @@ public class TestJson5Parser {
     @Test
     void numbers() {
         String payload = "[123e+45,-123e45,123]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(123e+45, element.get(0).getAsNumber().doubleValue());
@@ -258,7 +307,9 @@ public class TestJson5Parser {
     @Test
     void nullLiteral() {
         String payload = "[null,{'key':null}]";
-        Json5Options options = new Json5Options(true, true, false, 0);
+        //<editor-fold desc="Modified by Ultreon (added support for quoteless)">
+        Json5Options options = new Json5Options(true, true, false, 0, false);
+        //</editor-fold>
         Json5Lexer lexer = new Json5Lexer(new StringReader(payload), options);
         Json5Array element = Json5Parser.parseArray(lexer);
         assertEquals(payload, element.toString(options));

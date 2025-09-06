@@ -25,4 +25,16 @@ public final class Json5Number extends Json5Primitive {
     public Json5Number(Number number) {
         super(number);
     }
+
+    @Override
+    public Json5Element deepCopy() {
+        Json5Number o = new Json5Number((Number) value);
+        o.setComment(getComment());
+        return o;
+    }
+
+    @Override
+    public Json5Element noCommentCopy() {
+        return new Json5Number((Number) value);
+    }
 }

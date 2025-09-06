@@ -25,4 +25,21 @@ public final class Json5String extends Json5Primitive {
     public Json5String(String string) {
         super(string);
     }
+
+    @Override
+    public Json5Element deepCopy() {
+        Json5String o = new Json5String((String) value);
+        o.setComment(getComment());
+        return o;
+    }
+
+    @Override
+    public Json5Element noCommentCopy() {
+        return new Json5String((String) value);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return ((String) this.value).isEmpty();
+    }
 }

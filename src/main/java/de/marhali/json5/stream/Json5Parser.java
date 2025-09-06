@@ -51,18 +51,31 @@ public final class Json5Parser {
     public static Json5Element parse(Json5Lexer lexer) {
         Objects.requireNonNull(lexer);
 
-        switch (lexer.nextClean()) {
+        char c = lexer.nextClean();
+        String comment = lexer.consumeComment();
+
+        Json5Element element;
+
+        switch (c) {
             case '{':
                 lexer.back();
-                return parseObject(lexer);
+                element = parseObject(lexer);
+                break;
             case '[':
                 lexer.back();
-                return parseArray(lexer);
+                element = parseArray(lexer);
+                break;
             case 0:
                 return null;
             default:
                 throw lexer.syntaxError("Unknown or unexpected control character");
         }
+
+        if (comment != null) {
+            element.setComment(comment);
+        }
+
+        return element;
     }
 
     /**
@@ -86,10 +99,14 @@ public final class Json5Parser {
 
         while (true) {
             control = lexer.nextClean();
+            String comment = lexer.consumeComment();
             switch (control) {
                 case 0:
                     throw lexer.syntaxError("A json object must end with '}'");
                 case '}':
+                    if (comment != null) {
+                        object.setComment(comment);
+                    }
                     return object;
                 default:
                     lexer.back();
@@ -104,7 +121,12 @@ public final class Json5Parser {
                 throw lexer.syntaxError("Expected ':' after a key, got '" + control + "' instead");
             }
 
-            object.add(key, lexer.nextValue());
+            Json5Element value = lexer.nextValue();
+            object.add(key, value);
+            if (comment != null) {
+                object.setComment(key, comment);
+                value.setComment(comment);
+            }
             control = lexer.nextClean();
 
             if(control == '}') {
@@ -136,16 +158,24 @@ public final class Json5Parser {
 
         while(true) {
             control = lexer.nextClean();
+            String comment = lexer.consumeComment();
             switch (control) {
                 case 0:
                     throw lexer.syntaxError("A json array must end with ']'");
                 case ']':
+                    if (comment != null) {
+                        array.setComment(comment);
+                    }
                     return array;
                 default:
                     lexer.back();
             }
 
-            array.add(lexer.nextValue());
+            Json5Element value = lexer.nextValue();
+            if (comment != null) {
+                value.setComment(comment);
+            }
+            array.add(value);
             control = lexer.nextClean();
 
             if(control == ']') {

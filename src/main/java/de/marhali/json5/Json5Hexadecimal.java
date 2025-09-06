@@ -25,6 +25,23 @@ import java.util.Objects;
  * @author Marcel Haßlinger
  */
 public final class Json5Hexadecimal extends Json5Primitive {
+    /**
+     * Creates a primitive containing a hex value.
+     *
+     * @param hex the value to create the primitive with.
+     */
+    public Json5Hexadecimal(BigInteger hex) {
+        super(hex);
+    }
+
+    /**
+     * Creates a primitive containing a hex value. For String to Number conversion see {@link #parseHexString(String)}
+     *
+     * @param hex the value to create the primitive with.
+     */
+    public Json5Hexadecimal(String hex) {
+        super(parseHexString(hex));
+    }
 
     /**
      * Converts the provided hex string into it's number representation.
@@ -49,36 +66,30 @@ public final class Json5Hexadecimal extends Json5Primitive {
     /**
      * Converts the provided number into it's hex literal character representation.
      *
-     * @param bigInteger     the number value
+     * @param bigInteger the number value
      * @param prefixPositive Prefix positive values with {@code +0x...} if true otherwise {@code 0x...}.
      * @return Hex character string including prefix
      */
     public static String serializeHexString(BigInteger bigInteger, boolean prefixPositive) {
         Objects.requireNonNull(bigInteger);
 
-        if(bigInteger.signum() >= 0) {
+        if (bigInteger.signum() >= 0) {
             return (prefixPositive ? "+0x" : "0x") + bigInteger.toString(16);
         } else {
             return "-0x" + bigInteger.abs().toString(16);
         }
     }
 
-    /**
-     * Creates a primitive containing a hex value.
-     *
-     * @param hex the value to create the primitive with.
-     */
-    public Json5Hexadecimal(BigInteger hex) {
-        super(hex);
+    @Override
+    public Json5Element deepCopy() {
+        Json5Hexadecimal o = new Json5Hexadecimal((BigInteger) value);
+        o.setComment(getComment());
+        return o;
     }
 
-    /**
-     * Creates a primitive containing a hex value. For String to Number conversion see {@link #parseHexString(String)}
-     *
-     * @param hex the value to create the primitive with.
-     */
-    public Json5Hexadecimal(String hex) {
-        super(parseHexString(hex));
+    @Override
+    public Json5Element noCommentCopy() {
+        return new Json5Hexadecimal((BigInteger) value);
     }
 
     /**

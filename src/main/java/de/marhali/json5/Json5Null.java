@@ -31,13 +31,20 @@ public final class Json5Null extends Json5Element {
     /**
      * Constructor for internal use only. Use {@link #INSTANCE} instead.
      */
-    private Json5Null() {}
+    public Json5Null() { }
 
     /**
      * Returns the same instance since it is an immutable value
      */
     @Override
     public Json5Null deepCopy() {
+        Json5Null json5Null = new Json5Null();
+        json5Null.setComment(this.getComment());
+        return json5Null;
+    }
+
+    @Override
+    public Json5Element noCommentCopy() {
         return INSTANCE;
     }
 

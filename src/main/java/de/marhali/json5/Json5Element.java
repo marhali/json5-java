@@ -34,11 +34,53 @@ import java.util.Objects;
  * @author Joel Leitch
  */
 public abstract class Json5Element {
+    private String comment;
+
     /**
-     * @return A deep copy of this element. Immutable elements like primitives
-     * and nulls are not copied.
+     * Gets the comment associated with this element.
+     *
+     * @return The comment string, or null if none exists.
+     */
+    public String getComment() {
+        return this.comment;
+    }
+
+    /**
+     * 对于Json5Null对象的注释,请通过以下方法来set
+     * @see Json5Object#setComment(String, String)
+     * @see Json5Array#setComment(int, String)
+     * comment字段不会参与equals 和hashCode
+     *
+     * @param comment The comment string. Can be multi-line.
+     */
+    public void setComment(String comment) {
+        // 不应该直接操作Json5Null.INSTANCE实例的注释
+        // 应该通过JsonObject或Json5Array的 setComment方法来操作
+        if (this == Json5Null.INSTANCE) {
+            return;
+        }
+        this.comment = comment;
+    }
+
+    /**
+     * Checks if a comment is associated with this element.
+     *
+     * @return True if a comment exists, false otherwise.
+     */
+    public boolean hasComment() {
+        return this.comment != null;
+    }
+
+    /**
+     * @return 深拷贝对象,包含各个子元素的注释
      */
     public abstract Json5Element deepCopy();
+
+    /**
+     *
+     * @return 返回一个不带任何注释的拷贝对象
+     */
+    public abstract Json5Element noCommentCopy();
 
     /**
      * provides check for verifying if this element is an array or not.
@@ -74,6 +116,40 @@ public abstract class Json5Element {
      */
     public boolean isJson5Null() {
         return this instanceof Json5Null;
+    }
+
+    /**
+     * 当对象为空字符串 空Json5Object 空Json5Array Json5Null时返回True,其它情况返回False.
+     *
+     * @return 对象是否为空
+     */
+    public boolean isEmpty() {
+        if (this instanceof Json5Null) {
+            return true;
+        } else if (this instanceof Json5Object) {
+            // noinspection RedundantCast
+            return ((Json5Object) this).isEmpty();
+        } else if (this instanceof Json5Array) {
+            // noinspection RedundantCast
+            return ((Json5Array) this).isEmpty();
+        } else if (this instanceof Json5String) {
+            // noinspection RedundantCast
+            return ((Json5String) this).isEmpty();
+        }
+        return false;
+    }
+
+    /**
+     * 将本对象的注释复制到目标对象
+     *
+     * @param target 目标对象
+     * @see Json5Object#mergeCommentTo(Json5Object)
+     * @see Json5Array#mergeCommentTo(Json5Array)
+     */
+    public void copyCommentTo(Json5Element target) {
+        if (target != null && this.comment != null) {
+            target.setComment(this.comment);
+        }
     }
 
     /**
@@ -133,6 +209,7 @@ public abstract class Json5Element {
      * @return get this element as a {@link Json5Null}.
      * @throws IllegalStateException if the element is of another type.
      */
+    @SuppressWarnings("unused")
     public Json5Null getAsJson5Null() {
         if (isJson5Null()) {
             return (Json5Null) this;
@@ -286,6 +363,7 @@ public abstract class Json5Element {
     /**
      * Returns a simple String representation of this element.
      * For pretty-printing use {@link Json5Writer} with custom configuration options.
+     *
      * @see #toString(Json5Options)
      */
     @Override
@@ -294,7 +372,16 @@ public abstract class Json5Element {
     }
 
     /**
+     * 将对象转为无注释标准json字符串
+     * @return 压缩的json字符串
+     */
+    public String toStandardString() {
+        return toString(new Json5OptionsBuilder().notWriteComments().build());
+    }
+
+    /**
      * Returns the String representation of this element.
+     *
      * @param options Configured serialization behaviour
      * @return Stringified representation of this element
      */
@@ -306,7 +393,6 @@ public abstract class Json5Element {
             Json5Writer json5Writer = new Json5Writer(options, stringWriter);
             json5Writer.write(this);
             return stringWriter.toString();
-
         } catch (IOException e) {
             throw new AssertionError(e);
         }
