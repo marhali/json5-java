@@ -18,6 +18,7 @@
 package de.marhali.json5;
 
 import de.marhali.json5.config.Json5Options;
+import de.marhali.json5.internal.RadixNumber;
 import de.marhali.json5.stream.Json5Writer;
 
 import java.io.IOException;
@@ -202,6 +203,19 @@ public abstract class Json5Element {
      *     more than a single element.
      */
     public Number getAsNumber() {
+        throw new UnsupportedOperationException(getClass().getSimpleName());
+    }
+
+    /**
+     * Convenience method to get this element as a {@link RadixNumber}.
+     *
+     * @return this element as a {@link RadixNumber}.
+     * @throws UnsupportedOperationException if this element is not a {@link Json5Primitive} or {@link
+     *     Json5Array}, or cannot be converted to a radix number.
+     * @throws IllegalStateException if this element is of the type {@link Json5Array} but contains
+     *     more than a single element.
+     */
+    public RadixNumber getAsRadixNumber() {
         throw new UnsupportedOperationException(getClass().getSimpleName());
     }
 

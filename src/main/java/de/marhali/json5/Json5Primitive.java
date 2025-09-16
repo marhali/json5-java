@@ -198,12 +198,12 @@ public final class Json5Primitive extends Json5Element {
         return value instanceof RadixNumber;
     }
 
-    private RadixNumber getAsRadixNumber() {
+    @Override
+    public RadixNumber getAsRadixNumber() {
         if (isNumber()) {
             return (RadixNumber) value;
         }
         throw new UnsupportedOperationException("Primitive is not a number");
-
     }
 
     public int getNumberRadix() {
