@@ -2,7 +2,8 @@
  * MIT License
  *
  * Copyright (C) 2021 SyntaxError404
- * Copyright (C) 2022 Marcel Haßlinger
+ * Copyright (C) 2024 Ultreon Team
+ * Copyright (C) 2022 - 2025 Marcel Haßlinger
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +27,8 @@
 package de.marhali.json5.stream;
 
 import de.marhali.json5.*;
+import de.marhali.json5.config.Json5Options;
+import de.marhali.json5.internal.EcmaScriptIdentifier;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -36,8 +39,9 @@ import java.util.Objects;
  * Writes a tree of {@link Json5Element}'s into their
  * string literal representation by using a {@link Writer write} stream.
  *
- * @author Marcel Haßlinger
  * @author SyntaxError404
+ * @author Ultreon Team
+ * @author Marcel Haßlinger
  */
 public final class Json5Writer {
 
@@ -48,45 +52,49 @@ public final class Json5Writer {
      * Creates a new instance that writes a JSON5-encoded stream to {@code writer}.
      * <p><b>Note:</b> The writer must be closed after operation ({@link Writer#close()})!</p>
      * @param options Parsing and serialization options
-     * @param writer Output stream. For best performance, use a {@link java.io.BufferedWriter}
+     * @param writer Output stream. For the best performance, use a {@link java.io.BufferedWriter}.
      */
     public Json5Writer(Json5Options options, Writer writer) {
-        this.options = Objects.requireNonNull(options);
-        this.writer = Objects.requireNonNull(writer);
+        Objects.requireNonNull(options);
+        Objects.requireNonNull(writer);
+
+        this.options = options;
+        this.writer = writer;
     }
 
     /**
      * Encodes and writes the provided {@link Json5Element} into json5 according to the specification
      * and the configured options. The element can be any json5 element. All child trees will be included.
+     * This function writes with depth {@code 0} and expects a root element.
+     * For nested elements, see the other write methods.
      * @param element Element to encode
      * @throws IOException If an I/O error occurs
      * @see #Json5Writer(Json5Options, Writer) Configuration options
-     * @see #write(Json5Element, String)
+     * @see #write(Json5Element, int)
      */
     public void write(Json5Element element) throws IOException {
-        write(element, "");
+        write(element, 0);
     }
 
     /**
      * Encodes and writes the provided {@link Json5Element} into json5 according to the specification
      * and the configured options. The element can be any json5 element. All child trees will be included.
      * @param element Element to encode
-     * @param indent Indent to apply (for nested elements)
+     * @param depth Depth of the current Json5 tree. Root node is {@code 0}. Counts {@code +1} on every child element.
      * @throws IOException If an I/O error occurs
      * @see #Json5Writer(Json5Options, Writer) Configuration options
-     * @see #write(Json5Element) without indent
+     * @see #write(Json5Element)
      */
-    public void write(Json5Element element, String indent) throws IOException {
+    public void write(Json5Element element, int depth) throws IOException {
         Objects.requireNonNull(element);
-        Objects.requireNonNull(indent);
 
-        if(element.isJson5Null()) {
+        if (element.isJson5Null()) {
             writeNull();
-        } else if(element.isJson5Object()) {
-            writeObject(element.getAsJson5Object(), indent);
-        } else if(element.isJson5Array()) {
-            writeArray(element.getAsJson5Array(), indent);
-        } else if(element.isJson5Primitive()) {
+        } else if (element.isJson5Object()) {
+            writeObject(element.getAsJson5Object(), depth);
+        } else if (element.isJson5Array()) {
+            writeArray(element.getAsJson5Array(), depth);
+        } else if (element.isJson5Primitive()) {
             writePrimitive(element.getAsJson5Primitive());
         } else {
             throw new UnsupportedOperationException("Unknown json element with type class "
@@ -95,11 +103,52 @@ public final class Json5Writer {
     }
 
     /**
+     * Writes any associated comments for the provided {@link Json5Element}.
+     * Checks if {@link Json5Options#isWriteComments()} is {@code true} and if the element has any comment assigned.
+     * @param element Element target
+     * @param depth Depth to use for writing
+     */
+    public void writeComment(Json5Element element, int depth) throws IOException {
+        if (!options.isWriteComments() || !element.hasComment()) {
+            return;
+        }
+
+        String indent = depthToIndent(depth);
+        String comment = element.getComment();
+        String[] lines = comment.split("\n");
+        boolean multiLineComment = lines.length > 1;
+
+        if (options.getIndentFactor() > 0) {
+            // pretty-printing
+            if (multiLineComment) {
+                writer.append(indent).append("/*\n");
+                for (String line : lines) {
+                    writer.append(indent).append(" * ").append(line).append("\n");
+                }
+                writer.append(indent).append(" */\n");
+            } else {
+                writer.append(indent).append("// ").append(comment).append("\n");
+            }
+        } else {
+            // write in the shortest possible style
+            writer.append("/*");
+            for (int i = 0; i < lines.length; i++) {
+                writer.append(lines[i]);
+                if (i != lines.length - 1) {
+                    // Use whitespace for simulated break-lines
+                    writer.append(" ");
+                }
+            }
+            writer.append("*/");
+        }
+    }
+
+    /**
      * Writes the equivalent of a {@link de.marhali.json5.Json5Null}({@code null}) value.
      * @throws IOException If an I/O error occurs.
      */
     public void writeNull() throws IOException {
-        writer.write("null");
+        writer.append("null");
     }
 
     /**
@@ -110,7 +159,7 @@ public final class Json5Writer {
     public void writePrimitive(Json5Primitive primitive) throws IOException {
         Objects.requireNonNull(primitive);
 
-        if(primitive instanceof Json5String) {
+        if (primitive.isString()) {
             writer.append(quote(primitive.getAsString()));
         } else {
             writer.append(primitive.getAsString());
@@ -120,42 +169,52 @@ public final class Json5Writer {
     /**
      * Writes the provided {@link Json5Object} to the stream.
      * @param object Object to encode
-     * @param indent Indent to apply (for nested elements)
+     * @param depth Depth to use for writing
      * @throws IOException If an I/O error occurs.
      * @see #write(Json5Element)
      */
-    public void writeObject(Json5Object object, String indent) throws IOException {
+    public void writeObject(Json5Object object, int depth) throws IOException {
         Objects.requireNonNull(object);
-        Objects.requireNonNull(indent);
 
-        String childIndent = indent + " ".repeat(options.getIndentFactor());
+        if (depth == 0) {
+            // Root element comment
+            writeComment(object, depth);
+        }
 
-        writer.write("{");
+        int childDepth = depth + 1;
+        String indent = depthToIndent(depth);
+        String childIndent = depthToIndent(childDepth);
 
-        int index = 0;
-        for(Map.Entry<String, Json5Element> entry : object.entrySet()) {
-            if(options.getIndentFactor() > 0) {
-                writer.append('\n').append(childIndent);
-            }
+        writer.append('{');
 
-            writer.append(quote(entry.getKey())).append(":");
-
-            if(options.getIndentFactor() > 0) {
-                writer.append(' ');
-            }
-
-            write(entry.getValue(), childIndent);
-
-            if(options.isTrailingComma() || index < object.size() - 1) {
-                writer.append(',');
-            }
-
+        int index = -1;
+        for (Map.Entry<String, Json5Element> entry : object.entrySet()) {
             index++;
+
+            if (options.getIndentFactor() > 0) {
+               writer.append("\n");
+            }
+
+            writeComment(entry.getValue(), childDepth);
+
+            if (options.getIndentFactor() > 0)
+                writer.append(childIndent);
+
+            writer.append(quoteKey(entry.getKey()))
+                .append(':');
+
+            if (options.getIndentFactor() > 0)
+                writer.append(' ');
+
+            write(entry.getValue(), childDepth);
+
+            if (options.isTrailingComma() || index < object.size() - 1) {
+                writer.append(",");
+            }
         }
 
-        if(options.getIndentFactor() > 0 && object.size() > 0) {
+        if (options.getIndentFactor() > 0)
             writer.append('\n').append(indent);
-        }
 
         writer.append('}');
     }
@@ -163,56 +222,80 @@ public final class Json5Writer {
     /**
      * Writes the provided {@link Json5Array} to the stream.
      * @param array Array to encode
-     * @param indent Indent to apply (for nested elements)
+     * @param depth Depth to use for writing
      * @throws IOException If an I/O error occurs.
      * @see #write(Json5Element)
      */
-    public void writeArray(Json5Array array, String indent) throws IOException {
+    public void writeArray(Json5Array array, int depth) throws IOException {
         Objects.requireNonNull(array);
-        Objects.requireNonNull(indent);
 
-        String childIndent = indent + " ".repeat(options.getIndentFactor());
+        if (depth == 0) {
+            // Root element comment
+            writeComment(array, depth);
+        }
 
-        writer.write('[');
+        int childDepth = depth + 1;
+        String indent = depthToIndent(depth);
+        String childIndent = depthToIndent(childDepth);
 
-        for(int i = 0; i < array.size(); i++) {
-            Json5Element currentElement = array.get(i);
+        writer.append('[');
 
-            if(options.getIndentFactor() > 0) {
-                writer.append('\n').append(childIndent);
-            }
+        int index = -1;
+        for (Json5Element value : array) {
+            index++;
 
-            write(currentElement, childIndent);
+            if (options.getIndentFactor() > 0)
+                writer.append('\n');
 
-            if(options.isTrailingComma() || i < array.size() - 1) {
-                writer.append(',');
+            writeComment(value, childDepth);
+
+            writer.append(childIndent);
+
+            write(value, childDepth);
+
+            if (options.isTrailingComma() || index < array.size() - 1) {
+                writer.append(",");
             }
         }
 
-        if(options.getIndentFactor() > 0 && !array.isEmpty()) {
+        if(options.getIndentFactor() > 0)
             writer.append('\n').append(indent);
-        }
 
-        writer.write(']');
+        writer.append(']');
+    }
+
+    public String quoteKey(String key) {
+        if (options.isQuoteless() && EcmaScriptIdentifier.isValid(key)) {
+            return key;
+        } else {
+            return quote(key);
+        }
+    }
+
+    public String quote(String string) {
+        return quote(string, options);
     }
 
     /**
      * Quotes the provided string according to the json5 <a href="https://spec.json5.org/#strings">specification</a>.
      * @param string String to quote
-     * @return Quoted string
+     * @return quoted string
      */
-    public String quote(String string) {
-        final char qt = options.isQuoteSingle() ? '\'' : '"';
+    static String quote(String string, Json5Options options) {
+        final char quote = options.isQuoteSingle() ? '\'' : '"';
 
-        if(string == null || string.isEmpty()) {
-            return String.valueOf(qt).repeat(2);
-        }
+        if (string == null || string.isEmpty())
+            return String.valueOf(quote).repeat(2);
 
         StringBuilder quoted = new StringBuilder(string.length() + 2);
-        quoted.append(qt);
+        boolean ascii = options.isStringifyAscii();
 
-        for(char c : string.toCharArray()) {
-            if(c == qt) {
+        quoted.append(quote);
+
+        for (int i = 0, n = string.length(); i < n; ++i) {
+            char c = string.charAt(i);
+
+            if(c == quote) {
                 quoted.append('\\');
                 quoted.append(c);
                 continue;
@@ -241,26 +324,44 @@ public final class Json5Writer {
                     quoted.append("\\v");
                     break;
                 default:
-                    // escape non-graphical characters (https://www.unicode.org/versions/Unicode13.0.0/ch02.pdf#G286941)
-                    switch(Character.getType(c)) {
-                        case Character.FORMAT:
-                        case Character.LINE_SEPARATOR:
-                        case Character.PARAGRAPH_SEPARATOR:
-                        case Character.CONTROL:
-                        case Character.PRIVATE_USE:
-                        case Character.SURROGATE:
-                        case Character.UNASSIGNED:
-                            quoted.append("\\u");
-                            quoted.append(String.format("%04X", c));
-                            break;
-                        default:
-                            quoted.append(c);
-                            break;
+                    boolean unicode = false;
+
+                    if (!ascii) {
+                        // escape non-graphical characters (https://www.unicode.org/versions/Unicode13.0.0/ch02.pdf#G286941)
+                        switch(Character.getType(c)) {
+                            case Character.FORMAT:
+                            case Character.LINE_SEPARATOR:
+                            case Character.PARAGRAPH_SEPARATOR:
+                            case Character.CONTROL:
+                            case Character.PRIVATE_USE:
+                            case Character.SURROGATE:
+                            case Character.UNASSIGNED:
+                                unicode = true;
+                                break;
+                            default:
+                                break;
+                        }
                     }
+                    else unicode = c > 0x7F;
+
+                    if(unicode) {
+                        quoted.append("\\u");
+                        quoted.append(String.format("%04X", (int) c));
+                    }
+                    else quoted.append(c);
             }
         }
 
-        quoted.append(qt);
+        quoted.append(quote);
+
         return quoted.toString();
+    }
+
+    private String depthToIndent(int depth) {
+        if (options.getIndentFactor() > 0) {
+            return " ".repeat(depth * options.getIndentFactor());
+        }
+
+        return "";
     }
 }
