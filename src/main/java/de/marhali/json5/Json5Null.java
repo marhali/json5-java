@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Google Inc.
+ * Copyright (C) 2025 Marcel Haßlinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,39 +22,15 @@ package de.marhali.json5;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author Marcel Haßlinger
  */
 public final class Json5Null extends Json5Element {
-    /**
-     * Singleton for json {@code null} literal
-     */
-    public static final Json5Null INSTANCE = new Json5Null();
+    public Json5Null() {}
 
-    /**
-     * Constructor for internal use only. Use {@link #INSTANCE} instead.
-     */
-    private Json5Null() {}
-
-    /**
-     * Returns the same instance since it is an immutable value
-     */
     @Override
-    public Json5Null deepCopy() {
-        return INSTANCE;
-    }
-
-    /**
-     * All instances of JsonNull have the same hash code since they are indistinguishable
-     */
-    @Override
-    public int hashCode() {
-        return Json5Null.class.hashCode();
-    }
-
-    /**
-     * All instances of JsonNull are the same
-     */
-    @Override
-    public boolean equals(Object other) {
-        return this == other || other instanceof Json5Null;
+    public Json5Element deepCopy() {
+        Json5Null copy = new Json5Null();
+        copy.setComment(comment);
+        return copy;
     }
 }
