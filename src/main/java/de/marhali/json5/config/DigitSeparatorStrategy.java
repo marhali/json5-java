@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Marcel Haßlinger
+ * Copyright (C) 2022 - 2025 Marcel Haßlinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-package de.marhali.json5;
+package de.marhali.json5.config;
 
 /**
- * A class representing a json5 boolean value.
+ * An enum containing all supported behaviors for handling digit separators.
  *
  * @author Marcel Haßlinger
  */
-public final class Json5Boolean extends Json5Primitive {
-    public Json5Boolean(Boolean value) {
-        super(value);
-    }
+public enum DigitSeparatorStrategy {
+
+    /**
+     * Expect no digit separators
+     */
+    NONE,
+
+    /**
+     * Uses Java-style digit separators (e.g. {@code 123_456}).
+     */
+    JAVA_STYLE,
+
+    /**
+     * Uses C-style digit separators (e.g. {@code 123'456}).
+     */
+    C_STYLE,
+
 }
