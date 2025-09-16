@@ -16,6 +16,7 @@
 
 package de.marhali.json5;
 
+import de.marhali.json5.config.Json5Options;
 import de.marhali.json5.stream.Json5Lexer;
 import de.marhali.json5.stream.Json5Parser;
 import de.marhali.json5.stream.Json5Writer;
@@ -25,7 +26,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * This is the main class for using JSON5. This class provides methods to parse and
+ * This is the main class for using Json5. This class provides methods to parse and
  * serialize Json5 data according to the specification and the configured {@link Json5Options options}.
  *
  * <p>
@@ -46,12 +47,12 @@ import java.util.function.Function;
 public final class Json5 {
 
     /**
-     * Constructs a new json5 instance by using the {@link Json5OptionsBuilder}.
+     * Constructs a new json5 instance by using the {@link Json5Options#builder()}.
      * @param builder Options builder
-     * @return Provide built options by returning {@link Json5OptionsBuilder#build()} method
+     * @return Built options
      */
-    public static Json5 builder(Function<Json5OptionsBuilder, Json5Options> builder) {
-        return new Json5(builder.apply(new Json5OptionsBuilder()));
+    public static Json5 builder(Function<Json5Options.Builder, Json5Options> builder) {
+        return new Json5(builder.apply(Json5Options.builder()));
     }
 
     private final Json5Options options;
@@ -92,7 +93,7 @@ public final class Json5 {
      * <p><b>Note:</b> The reader must be closed after operation</p>
      * @param reader Can be any applicable {@link Reader}
      * @return Parsed json5 tree. Can be {@code null} if the provided stream does not contain any data
-     * @see Json5Parser#parse(Json5Lexer) 
+     * @see Json5Parser#parse(Json5Lexer)
      */
     public Json5Element parse(Reader reader) {
         Objects.requireNonNull(reader);
@@ -104,14 +105,14 @@ public final class Json5 {
     /**
      * Parses the provided json5-encoded {@link String} into a parse tree of {@link Json5Element}'s.
      * There must be a root element based on a {@link Json5Object} or {@link Json5Array}.
-     * @param jsonString Json5 encoded {@link String}
+     * @param json5String Json5 encoded {@link String}
      * @return Parsed json5 tree. Can be {@code null} if the provided {@link String} is empty
-     * @see #parse(Reader) 
+     * @see #parse(Reader)
      */
-    public Json5Element parse(String jsonString) {
-        Objects.requireNonNull(jsonString);
+    public Json5Element parse(String json5String) {
+        Objects.requireNonNull(json5String);
 
-        StringReader reader = new StringReader(jsonString);
+        StringReader reader = new StringReader(json5String);
         Json5Element element = this.parse(reader);
         reader.close();
         return element;
@@ -138,7 +139,7 @@ public final class Json5 {
      * @param element {@link Json5Element} to serialize
      * @param writer Can be any applicable {@link Writer}
      * @throws IOException If an I/O error occurs
-     * @see Json5Writer#write(Json5Element) 
+     * @see Json5Writer#write(Json5Element)
      */
     public void serialize(Json5Element element, Writer writer) throws IOException {
         Objects.requireNonNull(element);
@@ -153,7 +154,7 @@ public final class Json5 {
      * @param element {@link Json5Element} to serialize
      * @return Json5 encoded {@link String}
      * @throws IOException If an I/O error occurs
-     * @see #serialize(Json5Element, Writer) 
+     * @see #serialize(Json5Element, Writer)
      */
     public String serialize(Json5Element element) throws IOException {
         Objects.requireNonNull(element);
