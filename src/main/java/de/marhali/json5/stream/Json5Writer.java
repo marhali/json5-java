@@ -161,6 +161,15 @@ public final class Json5Writer {
 
         if (primitive.isString()) {
             writer.append(quote(primitive.getAsString()));
+        } else if (primitive.isInstant()) {
+            var instant = primitive.getAsInstant();
+            if (options.isStringifyUnixInstants()) {
+                writer.write(String.valueOf(instant.getEpochSecond()));
+            } else {
+                writer.write(quote(instant.toString()));
+            }
+        } else if (primitive.isNumber()) {
+            writer.append(formatNumberString(primitive.getAsString()));
         } else {
             writer.append(primitive.getAsString());
         }
@@ -262,6 +271,29 @@ public final class Json5Writer {
             writer.append('\n').append(indent);
 
         writer.append(']');
+    }
+
+    public String applyNumberSeparator(String numberString, char separator) {
+        StringBuilder sb = new StringBuilder(numberString);
+        int len = sb.length();
+
+        for (int i = len - 3; i > 0; i -= 3) {
+            sb.insert(i, separator);
+        }
+
+        return sb.toString();
+    }
+
+    public String formatNumberString(String numberString) {
+        var strategy = options.getDigitSeparatorStrategy();
+        switch (strategy) {
+            case JAVA_STYLE:
+                return applyNumberSeparator(numberString, '_');
+            case C_STYLE:
+                return applyNumberSeparator(numberString, '\'');
+            default:
+                return numberString;
+        }
     }
 
     public String quoteKey(String key) {

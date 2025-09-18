@@ -22,6 +22,7 @@ import de.marhali.json5.internal.RadixNumber;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -75,12 +76,21 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
     }
 
     /**
+     * Adds the specified {@link Instant} to self.
+     *
+     * @param instant the {@link Instant} that needs to be added to the array.
+     */
+    public void add(Instant instant) {
+        elements.add(instant == null ? Json5Primitive.fromNull() : Json5Primitive.fromInstant(instant));
+    }
+
+    /**
      * Adds the specified boolean to self.
      *
      * @param bool the boolean that needs to be added to the array.
      */
     public void add(Boolean bool) {
-        elements.add(bool == null ? new Json5Null() : Json5Primitive.fromBoolean(bool));
+        elements.add(bool == null ? Json5Primitive.fromNull() : Json5Primitive.fromBoolean(bool));
     }
 
     /**
@@ -89,7 +99,7 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @param character the character that needs to be added to the array.
      */
     public void add(Character character) {
-        elements.add(character == null ? new Json5Null() : Json5Primitive.fromCharacter(character));
+        elements.add(character == null ? Json5Primitive.fromNull() : Json5Primitive.fromCharacter(character));
     }
 
     /**
@@ -98,11 +108,11 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @param number the number that needs to be added to the array.
      */
     public void add(Number number) {
-        elements.add(number == null ? new Json5Null() : Json5Primitive.fromNumber(number));
+        elements.add(number == null ? Json5Primitive.fromNull() : Json5Primitive.fromNumber(number));
     }
 
     public void add(Number number, int radix) {
-        elements.add(number == null ? new Json5Null() : Json5Primitive.fromNumber(number, radix));
+        elements.add(number == null ? Json5Primitive.fromNull() : Json5Primitive.fromNumber(number, radix));
     }
 
     /**
@@ -111,7 +121,7 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @param string the string that needs to be added to the array.
      */
     public void add(String string) {
-        elements.add(string == null ? new Json5Null() : Json5Primitive.fromString(string));
+        elements.add(string == null ? Json5Primitive.fromNull() : Json5Primitive.fromString(string));
     }
 
     /**
@@ -121,7 +131,7 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      */
     public void add(Json5Element element) {
         if (element == null) {
-            element = new Json5Null();
+            element = Json5Primitive.fromNull();
         }
         elements.add(element);
     }
@@ -144,7 +154,7 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
      * @throws IndexOutOfBoundsException if the specified index is outside the array bounds
      */
     public Json5Element set(int index, Json5Element element) {
-        return elements.set(index, element == null ? new Json5Null() : element);
+        return elements.set(index, element == null ? Json5Primitive.fromNull() : element);
     }
 
     /**
@@ -415,6 +425,19 @@ public final class Json5Array extends Json5Element implements Iterable<Json5Elem
     @Override
     public short getAsShort() {
         return getAsSingleElement().getAsShort();
+    }
+
+    /**
+     * Convenience method to get this array as a Insta if it contains a single element. This method
+     * calls {@link Json5Element#getAsBoolean()} on the element, therefore any of the exceptions
+     * declared by that method can occur.
+     *
+     * @return this element as a boolean if it is single element array.
+     * @throws IllegalStateException if the array is empty or has more than one element.
+     */
+    @Override
+    public Instant getAsInstant() {
+        return getAsSingleElement().getAsInstant();
     }
 
     /**

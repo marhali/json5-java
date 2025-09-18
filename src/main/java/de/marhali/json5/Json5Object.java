@@ -19,6 +19,7 @@ package de.marhali.json5;
 
 import de.marhali.json5.internal.LinkedTreeMap;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -44,6 +45,11 @@ public final class Json5Object extends Json5Element {
     private final LinkedTreeMap<String, Json5Element> members = new LinkedTreeMap<>(false);
 
     /**
+     * Creates a new instance of a {@link Json5Object}.
+     */
+    public Json5Object() {}
+
+    /**
      * Creates a deep copy of this element and all its children.
      */
     @Override
@@ -59,13 +65,13 @@ public final class Json5Object extends Json5Element {
     /**
      * Adds a member, which is a name-value pair, to self. The name must be a String, but the value
      * can be an arbitrary {@link Json5Element}, thereby allowing you to build a full tree of
-     * Json5Elements rooted at this node.
+     * {@link Json5Element Json5Elements} rooted at this node.
      *
      * @param property name of the member.
      * @param value the member object.
      */
     public void add(String property, Json5Element value) {
-        members.put(property, value == null ? new Json5Null() : value);
+        members.put(property, value == null ? Json5Primitive.fromNull() : value);
     }
 
     /**
@@ -80,6 +86,17 @@ public final class Json5Object extends Json5Element {
     }
 
     /**
+     * Convenience method to add a char member. The specified value is converted to a {@link
+     * Json5Primitive} of Character.
+     *
+     * @param property name of the member.
+     * @param value the char value associated with the member.
+     */
+    public void addProperty(String property, Character value) {
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromCharacter(value));
+    }
+
+    /**
      * Convenience method to add a string member. The specified value is converted to a {@link
      * Json5Primitive} of String.
      *
@@ -87,7 +104,7 @@ public final class Json5Object extends Json5Element {
      * @param value the string value associated with the member.
      */
     public void addProperty(String property, String value) {
-        add(property, value == null ? new Json5Null() : Json5Primitive.fromString(value));
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromString(value));
     }
 
     /**
@@ -98,11 +115,22 @@ public final class Json5Object extends Json5Element {
      * @param value the number value associated with the member.
      */
     public void addProperty(String property, Number value) {
-        add(property, value == null ? new Json5Null() : Json5Primitive.fromNumber(value));
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromNumber(value));
     }
 
     public void addProperty(String property, Number value, int radix) {
-        add(property, value == null ? new Json5Null() : Json5Primitive.fromNumber(value, radix));
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromNumber(value, radix));
+    }
+
+    /**
+     * Convenience method to add a {@link Instant} member. The specified value is converted to a {@link
+     * Json5Primitive} of {@link Instant}.
+     *
+     * @param property name of the member.
+     * @param value the {@link Instant} value associated with the member.
+     */
+    public void addProperty(String property, Instant value) {
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromInstant(value));
     }
 
     /**
@@ -113,18 +141,7 @@ public final class Json5Object extends Json5Element {
      * @param value the boolean value associated with the member.
      */
     public void addProperty(String property, Boolean value) {
-        add(property, value == null ? new Json5Null() : Json5Primitive.fromBoolean(value));
-    }
-
-    /**
-     * Convenience method to add a char member. The specified value is converted to a {@link
-     * Json5Primitive} of Character.
-     *
-     * @param property name of the member.
-     * @param value the char value associated with the member.
-     */
-    public void addProperty(String property, Character value) {
-        add(property, value == null ? new Json5Null() : Json5Primitive.fromCharacter(value));
+        add(property, value == null ? Json5Primitive.fromNull() : Json5Primitive.fromBoolean(value));
     }
 
     /**

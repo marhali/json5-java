@@ -621,7 +621,7 @@ public class Json5Lexer {
             throw syntaxError("Expected value, got EOF instead");
 
         if (string.equals("null"))
-            return new Json5Null();
+            return Json5Primitive.fromNull();
 
         if (string.equals("true"))
             return Json5Primitive.fromBoolean(true);

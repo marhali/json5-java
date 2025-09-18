@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -190,6 +191,19 @@ public abstract class Json5Element {
      *     more than a single element.
      */
     public boolean getAsBoolean() {
+        throw new UnsupportedOperationException(getClass().getSimpleName());
+    }
+
+    /**
+     * Convenience method to get this element as a {@link Instant} value.
+     *
+     * @return this element as a primitive {@link Instant} value.
+     * @throws UnsupportedOperationException if this element is not a {@link Json5Primitive} or {@link
+     *     Json5Array}.
+     * @throws IllegalStateException if this element is of the type {@link Json5Array} but contains
+     *     more than a single element.
+     */
+    public Instant getAsInstant() {
         throw new UnsupportedOperationException(getClass().getSimpleName());
     }
 
