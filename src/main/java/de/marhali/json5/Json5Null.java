@@ -33,4 +33,9 @@ public final class Json5Null extends Json5Element {
         copy.setComment(comment);
         return copy;
     }
+
+    @Override
+    public String getAsString() {
+        return "null";
+    }
 }
