@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package de.marhali.json5.internal;
+package de.marhali.json5.e2e.failures;
 
+import de.marhali.json5.Json5;
+import de.marhali.json5.config.Json5Options;
+import de.marhali.json5.e2e.TestResourceHelper;
+import de.marhali.json5.exception.Json5Exception;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,21 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Marcel Haßlinger
  */
-public class RadixNumberTest {
-
+public class DisallowNaNTest {
     @Test
-    void test_getNumber() {
-        assertEquals(187, new RadixNumber(187, 10).getNumber());
-    }
+    @DisplayName("Parse: disallowed NaN throws exception")
+    void disallowNaN() {
+        var json5 = Json5.builder(Json5Options.Builder::build);
 
-    @Test
-    void test_getRadix() {
-        assertEquals(10, new RadixNumber(187, 10).getRadix());
-    }
+        var ex = assertThrows(Json5Exception.class, () -> json5.parse(TestResourceHelper.getTestResourceContent("e2e/failures/disallow-NaN.json5")));
 
-    @Test
-    void test_equals() {
-        assertEquals(new RadixNumber(187, 10), new RadixNumber(187, 10));
+        assertEquals("NaN is not allowed at index 22 [character 1 in line 3]", ex.getMessage());
     }
-
 }

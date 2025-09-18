@@ -82,7 +82,7 @@ public final class Json5Parser {
 
     /**
      * Parses the specified {@link Json5Lexer lexer} into a parse tree of an {@link Json5Object}.
-     * If the provided data does not correspond to a json object a {@link Json5Exception} will be thrown.
+     * If the provided data does not correspond to a {@link Json5Object} a {@link Json5Exception} will be thrown.
      * @param lexer Tokenized json5 data.
      * @return a parse tree of {@link Json5Object} corresponding to the specified JSON5.
      * @see #parse(Json5Lexer)

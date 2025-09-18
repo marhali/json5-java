@@ -23,6 +23,7 @@ import de.marhali.json5.internal.RadixNumber;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -41,12 +42,29 @@ public final class Json5Primitive extends Json5Element {
     private final Object value;
 
     /**
+     * Create a primitive containing a {@code null} value.
+     */
+    public static Json5Null fromNull() {
+        return new Json5Null();
+    }
+
+    /**
      * Create a primitive containing a boolean value.
      *
      * @param bool the value to create the primitive with.
      */
     public static Json5Primitive fromBoolean(Boolean bool) {
         return new Json5Primitive(Objects.requireNonNull(bool));
+    }
+
+    /**
+     * Create a primitive containing a {@link Instant} value.
+     * @param instant the value to create the primitive with.
+     * <p>
+     * <i>This is an extension that is not compliant to the official Json5 spec.</i>
+     */
+    public static Json5Primitive fromInstant(Instant instant) {
+        return new Json5Primitive(Objects.requireNonNull(instant));
     }
 
     /**
@@ -68,7 +86,7 @@ public final class Json5Primitive extends Json5Element {
     }
 
     /**
-     * Create a primitive containing a decimal {@link Number} (radix base 10).
+     * Create a primitive containing a decimal {@link Number} (radix base {@code 10}).
      *
      * @param number the value to create the primitive with.
      */
@@ -76,6 +94,13 @@ public final class Json5Primitive extends Json5Element {
         return Json5Primitive.fromNumber(Objects.requireNonNull(number), 10);
     }
 
+    /**
+     * Create a primitive containing a binary number (radix base {@code 2}).
+     * For example {@code +0b1010...}, {@code 0b1010...} or {@code -0b1010...}.
+     * <p>
+     * <i>This is an extension that is not compliant to the official Json5 spec.</i>
+     * @param binaryString the value to create the primitive with.
+     */
     public static Json5Primitive fromBinaryString(String binaryString) {
         Objects.requireNonNull(binaryString);
 
@@ -84,15 +109,25 @@ public final class Json5Primitive extends Json5Element {
         switch (binaryString.charAt(0)) {
             case '+': // +0b...
                 hexInteger = new BigInteger(binaryString.substring(3), 2);
+                break;
             case '-': // -0b...
                 hexInteger = new BigInteger(binaryString.substring(3), 2).negate();
+                break;
             default: // 0b...
                 hexInteger = new BigInteger(binaryString.substring(2), 2);
+                break;
         }
 
         return new Json5Primitive(new RadixNumber(hexInteger, 2));
     }
 
+    /**
+     * Create a primitive containing an octal number (radix base {@code 8}).
+     * For example {@code +0o107...}, {@code 0o107...} or {@code -0o107...}.
+     * <p>
+     * <i>This is an extension that is not compliant to the official Json5 spec.</i>
+     * @param octalString the value to create the primitive with.
+     */
     public static Json5Primitive fromOctalString(String octalString) {
         Objects.requireNonNull(octalString);
 
@@ -101,15 +136,23 @@ public final class Json5Primitive extends Json5Element {
         switch (octalString.charAt(0)) {
             case '+': // +0b...
                 hexInteger = new BigInteger(octalString.substring(3), 8);
+                break;
             case '-': // -0b...
                 hexInteger = new BigInteger(octalString.substring(3), 8).negate();
+                break;
             default: // 0b...
                 hexInteger = new BigInteger(octalString.substring(2), 8);
+                break;
         }
 
         return new Json5Primitive(new RadixNumber(hexInteger, 8));
     }
 
+    /**
+     * Create a primitive containing a binary number (radix base {@code 16}).
+     * For example {@code +0x09af...}, {@code 0x09af...} or {@code -0x09af...}.
+     * @param hexString the value to create the primitive with.
+     */
     public static Json5Primitive fromHexString(String hexString) {
         Objects.requireNonNull(hexString);
 
@@ -118,10 +161,13 @@ public final class Json5Primitive extends Json5Element {
         switch (hexString.charAt(0)) {
             case '+': // +0x...
                 hexInteger = new BigInteger(hexString.substring(3), 16);
+                break;
             case '-': // -0x...
                 hexInteger = new BigInteger(hexString.substring(3), 16).negate();
+                break;
             default: // 0x...
                 hexInteger = new BigInteger(hexString.substring(2), 16);
+                break;
         }
 
         return new Json5Primitive(new RadixNumber(hexInteger, 16));
@@ -155,6 +201,7 @@ public final class Json5Primitive extends Json5Element {
     private Json5Primitive(Object value) {
         this.value = value;
     }
+
     /**
      * Returns the same value as primitives are immutable.
      */
@@ -190,6 +237,34 @@ public final class Json5Primitive extends Json5Element {
     }
 
     /**
+     * Check whether this primitive contains a {@link Instant} value.
+     *
+     * @return true if this primitive contains a {@link Instant} value, false otherwise.
+     */
+    public boolean isInstant() {
+        return value instanceof Instant;
+    }
+
+    @Override
+    public Instant getAsInstant() {
+        if (isInstant()) {
+            return (Instant) value;
+        } else if (isString()) {
+            return Instant.parse((String) value);
+        } else if (isNumber()) {
+            var radixNumber = getAsRadixNumber();
+            var number = radixNumber.getNumber();
+
+            if(number instanceof Byte || number instanceof Short || number instanceof Integer || number instanceof Long)
+                return Instant.ofEpochSecond((long) value);
+
+            if (number instanceof BigInteger)
+                return Instant.ofEpochSecond(((BigInteger) number).longValueExact());
+        }
+        throw new UnsupportedOperationException("Primitive is neither a number nor a string");
+    }
+
+    /**
      * Check whether this primitive contains a Number.
      *
      * @return true if this primitive contains a Number, false otherwise.
@@ -211,15 +286,15 @@ public final class Json5Primitive extends Json5Element {
     }
 
     public boolean isBinaryNumber() {
-        return getNumberRadix() == 2;
+        return isNumber() && getNumberRadix() == 2;
     }
 
     public boolean isOctalNumber() {
-        return getNumberRadix() == 8;
+        return isNumber() && getNumberRadix() == 8;
     }
 
     public boolean isHexNumber() {
-        return getNumberRadix() == 16;
+        return isNumber() && getNumberRadix() == 16;
     }
 
     /**
@@ -284,19 +359,24 @@ public final class Json5Primitive extends Json5Element {
     // Don't add Javadoc, inherit it from super implementation; no exceptions are thrown here
     @Override
     public String getAsString() {
-        if (value instanceof String) {
+        if (isString()) {
             return (String) value;
-        } else if (isBinaryNumber()) {
-            return getAsBinaryString();
-        } else if (isOctalNumber()) {
-            return getAsOctalString();
-        } else if (isHexNumber()) {
-            return getAsHexString();
-        } else if (isNumber()) {
-            return getAsNumber().toString();
+        } else if (isInstant()) {
+            return ((Instant) value).toString();
         } else if (isBoolean()) {
             return ((Boolean) value).toString();
+        } else if (isNumber()) {
+            if (isBinaryNumber()) {
+                return getAsBinaryString();
+            } else if (isOctalNumber()) {
+                return getAsOctalString();
+            } else if (isHexNumber()) {
+                return getAsHexString();
+            } else {
+                return getAsNumber().toString();
+            }
         }
+
         throw new AssertionError("Unexpected value type: " + value.getClass());
     }
 
