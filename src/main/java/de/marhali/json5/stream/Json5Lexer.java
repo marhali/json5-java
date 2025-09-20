@@ -113,6 +113,8 @@ public class Json5Lexer {
         previous = 0;
         current = 0;
         comment = null;
+
+        root = true;
     }
 
     /**
