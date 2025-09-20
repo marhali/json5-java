@@ -1,0 +1,7 @@
+{
+  alpha: "firstAlphaValue",
+  alpha: "secondAlphaValue",
+  bravo: "bravoValue",
+  charlie: "firstCharlieValue",
+  charlie: "secondCharlieValue"
+}
