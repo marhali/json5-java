@@ -285,7 +285,6 @@ public class Json5Lexer {
     public char nextClean() {
         while (true) {
             if (!more())
-                // TODO: check if empty stream, like index === -1?
                 return 0;
 
             char n = next();

@@ -75,8 +75,7 @@ public final class Json5 {
     }
 
     /**
-     * Parses the data from the {@link InputStream} into a tree of {@link Json5Element}'s. There must be
-     * a root element based on a {@link Json5Object} or {@link Json5Array}.
+     * Parses the data from the {@link InputStream} into a tree of {@link Json5Element}'s.
      * <p><b>Note:</b> The stream must be closed after operation</p>
      * @param in Can be any applicable {@link InputStream}
      * @return Parsed json5 tree. Can be {@code null} if the provided stream does not contain any data
@@ -88,8 +87,7 @@ public final class Json5 {
     }
 
     /**
-     * Parses the provided read-stream into a tree of {@link Json5Element}'s. There must be
-     * a root element based on a {@link Json5Object} or {@link Json5Array}.
+     * Parses the provided read-stream into a tree of {@link Json5Element}'s.
      * <p><b>Note:</b> The reader must be closed after operation</p>
      * @param reader Can be any applicable {@link Reader}
      * @return Parsed json5 tree. Can be {@code null} if the provided stream does not contain any data
@@ -104,15 +102,14 @@ public final class Json5 {
 
     /**
      * Parses the provided json5-encoded {@link String} into a parse tree of {@link Json5Element}'s.
-     * There must be a root element based on a {@link Json5Object} or {@link Json5Array}.
-     * @param json5String Json5 encoded {@link String}
+     * @param string Json5 encoded {@link String}
      * @return Parsed json5 tree. Can be {@code null} if the provided {@link String} is empty
      * @see #parse(Reader)
      */
-    public Json5Element parse(String json5String) {
-        Objects.requireNonNull(json5String);
+    public Json5Element parse(String string) {
+        Objects.requireNonNull(string);
 
-        StringReader reader = new StringReader(json5String);
+        StringReader reader = new StringReader(string);
         Json5Element element = this.parse(reader);
         reader.close();
         return element;
