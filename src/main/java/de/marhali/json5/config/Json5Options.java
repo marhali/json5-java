@@ -174,6 +174,14 @@ public final class Json5Options {
     private final boolean trailingComma;
 
     /**
+     * Specifies whether a final newline (empty line) is appended at the end of written Json5 data.
+     * If {@code true}, this option inserts the final newline after a root {@link Json5Object} or {@link Json5Array}.
+     * <p>
+     * <i>This is a {@link de.marhali.json5.stream.Json5Writer writer}-only option</i>
+     */
+    private final boolean insertFinalNewline;
+
+    /**
      * Specifies the behaviour for digit separator's on numbers.
      * <p>
      * <i>This option applies to both {@link de.marhali.json5.stream.Json5Parser parsing} and {@link de.marhali.json5.stream.Json5Writer writing}.</i>
@@ -212,9 +220,11 @@ public final class Json5Options {
      *     <li>allowNaN: <code>true</code></li>
      *     <li>allowInfinity: <code>true</code></li>
      *     <li>allowInvalidSurrogates: <code>true</code></li>
+     *     <li>quoteless: <code>true</code></li>
      *     <li>parseComments: <code>true</code></li>
      *     <li>writeComments: <code>true</code></li>
      *     <li>trailingComma: <code>true</code></li>
+     *     <li>insertFinalNewline: <code>true</code></li>
      *     <li>digitSeparatorStrategy: <code>NONE</code></li>
      *     <li>duplicateKeyStrategy: <code>UNIQUE</code></li>
      *     <li>prettyPrinting: <code>true</code></li>
@@ -224,9 +234,11 @@ public final class Json5Options {
             .allowNaN()
             .allowInfinity()
             .allowInvalidSurrogates()
+            .quoteless()
             .parseComments()
             .writeComments()
             .trailingComma()
+            .insertFinalNewline()
             .digitSeparatorStrategy(DigitSeparatorStrategy.NONE)
             .duplicateKeyStrategy(DuplicateKeyStrategy.UNIQUE)
             .prettyPrinting()
@@ -248,6 +260,7 @@ public final class Json5Options {
         this.parseComments = builder.parseComments;
         this.writeComments = builder.writeComments;
         this.trailingComma = builder.trailingComma;
+        this.insertFinalNewline = builder.insertFinalNewline;
         this.digitSeparatorStrategy = builder.digitSeparatorStrategy;
         this.duplicateBehaviour = builder.duplicateKeyStrategy;this.indentFactor = builder.indentFactor;
     }
@@ -312,6 +325,10 @@ public final class Json5Options {
         return trailingComma;
     }
 
+    public boolean isInsertFinalNewline() {
+        return insertFinalNewline;
+    }
+
     public DigitSeparatorStrategy getDigitSeparatorStrategy() {
         return digitSeparatorStrategy;
     }
@@ -328,36 +345,12 @@ public final class Json5Options {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Json5Options that = (Json5Options) o;
-        return stringifyUnixInstants == that.stringifyUnixInstants && stringifyAscii == that.stringifyAscii && allowNaN == that.allowNaN && allowInfinity == that.allowInfinity && allowInvalidSurrogates == that.allowInvalidSurrogates && quoteSingle == that.quoteSingle && quoteless == that.quoteless && allowBinaryLiterals == that.allowBinaryLiterals && allowOctalLiterals == that.allowOctalLiterals && allowHexFloatingLiterals == that.allowHexFloatingLiterals && allowLongUnicodeEscapes == that.allowLongUnicodeEscapes && allowTrailingData == that.allowTrailingData && parseComments == that.parseComments && writeComments == that.writeComments && trailingComma == that.trailingComma && indentFactor == that.indentFactor && digitSeparatorStrategy == that.digitSeparatorStrategy && duplicateBehaviour == that.duplicateBehaviour;
+        return stringifyUnixInstants == that.stringifyUnixInstants && stringifyAscii == that.stringifyAscii && allowNaN == that.allowNaN && allowInfinity == that.allowInfinity && allowInvalidSurrogates == that.allowInvalidSurrogates && quoteSingle == that.quoteSingle && quoteless == that.quoteless && allowBinaryLiterals == that.allowBinaryLiterals && allowOctalLiterals == that.allowOctalLiterals && allowHexFloatingLiterals == that.allowHexFloatingLiterals && allowLongUnicodeEscapes == that.allowLongUnicodeEscapes && allowTrailingData == that.allowTrailingData && parseComments == that.parseComments && writeComments == that.writeComments && trailingComma == that.trailingComma && insertFinalNewline == that.insertFinalNewline && indentFactor == that.indentFactor && digitSeparatorStrategy == that.digitSeparatorStrategy && duplicateBehaviour == that.duplicateBehaviour;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stringifyUnixInstants, stringifyAscii, allowNaN, allowInfinity, allowInvalidSurrogates, quoteSingle, quoteless, allowBinaryLiterals, allowOctalLiterals, allowHexFloatingLiterals, allowLongUnicodeEscapes, allowTrailingData, parseComments, writeComments, trailingComma, digitSeparatorStrategy, duplicateBehaviour, indentFactor);
-    }
-
-    @Override
-    public String toString() {
-        return "Json5Options{" +
-                "stringifyUnixInstants=" + stringifyUnixInstants +
-                ", stringifyAscii=" + stringifyAscii +
-                ", allowNaN=" + allowNaN +
-                ", allowInfinity=" + allowInfinity +
-                ", allowInvalidSurrogates=" + allowInvalidSurrogates +
-                ", quoteSingle=" + quoteSingle +
-                ", quoteless=" + quoteless +
-                ", allowBinaryLiterals=" + allowBinaryLiterals +
-                ", allowOctalLiterals=" + allowOctalLiterals +
-                ", allowHexFloatingLiterals=" + allowHexFloatingLiterals +
-                ", allowLongUnicodeEscapes=" + allowLongUnicodeEscapes +
-                ", allowTrailingData=" + allowTrailingData +
-                ", parseComments=" + parseComments +
-                ", writeComments=" + writeComments +
-                ", trailingComma=" + trailingComma +
-                ", digitSeparatorStrategy=" + digitSeparatorStrategy +
-                ", duplicateBehaviour=" + duplicateBehaviour +
-                ", indentFactor=" + indentFactor +
-                '}';
+        return Objects.hash(stringifyUnixInstants, stringifyAscii, allowNaN, allowInfinity, allowInvalidSurrogates, quoteSingle, quoteless, allowBinaryLiterals, allowOctalLiterals, allowHexFloatingLiterals, allowLongUnicodeEscapes, allowTrailingData, parseComments, writeComments, trailingComma, insertFinalNewline, digitSeparatorStrategy, duplicateBehaviour, indentFactor);
     }
 
     public static final class Builder {
@@ -376,6 +369,7 @@ public final class Json5Options {
         private boolean parseComments = false;
         private boolean writeComments = false;
         private boolean trailingComma = false;
+        private boolean insertFinalNewline = false;
         private DigitSeparatorStrategy digitSeparatorStrategy = DigitSeparatorStrategy.NONE;
         private DuplicateKeyStrategy duplicateKeyStrategy = DuplicateKeyStrategy.UNIQUE;
         private int indentFactor = 0;
@@ -521,6 +515,15 @@ public final class Json5Options {
          */
         public Builder trailingComma() {
             this.trailingComma = true;
+            return this;
+        }
+
+        /**
+         * @see Json5Options#insertFinalNewline
+         * @return builder
+         */
+        public Builder insertFinalNewline() {
+            this.insertFinalNewline = true;
             return this;
         }
 

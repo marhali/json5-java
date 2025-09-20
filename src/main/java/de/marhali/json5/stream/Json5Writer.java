@@ -100,6 +100,10 @@ public final class Json5Writer {
             throw new UnsupportedOperationException("Unknown json element with type class "
                     + element.getClass().getName());
         }
+
+        if (depth == 0 && options.isInsertFinalNewline()) {
+            writer.write('\n');
+        }
     }
 
     /**
