@@ -127,7 +127,7 @@ public class Json5Lexer {
             return null;
         }
 
-        String result = comment.toString().strip();
+        String result = comment.toString();
         comment = null;
         return result;
     }
@@ -245,6 +245,8 @@ public class Json5Lexer {
             comment.append('\n');
         }
 
+        long offset = character;
+
         while (true) {
             char n = next();
 
@@ -254,7 +256,22 @@ public class Json5Lexer {
 
             if (n == '*' && peek() == '/') {
                 next();
+                if (isLineTerminator(comment.charAt(comment.length() - 1))) {
+                    // Remove trailing line-terminators
+                    comment.deleteCharAt(comment.length() - 1);
+                }
                 return;
+            }
+
+            if (comment.length() == 0 && isLineTerminator(n)) {
+                // Skip heading line-terminators
+                continue;
+            } else if (character == offset+1 && isWhitespace(n)) {
+                // Skip stylistic whitespace between comment indicator and actual comment content
+                continue;
+            } else if (character <= offset && (isWhitespace(n) || n == '*') && !isLineTerminator(n)) {
+                // Skip whitespace offset until comments start in a new-line
+                continue;
             }
 
             comment.append(n);
@@ -268,11 +285,18 @@ public class Json5Lexer {
             comment.append('\n');
         }
 
+        long offset = character;
+
         while (true) {
             char n = next();
 
             if (isLineTerminator(n) || n == 0)
                 return;
+
+            if (character == offset+1 && isWhitespace(n)) {
+                // Skip stylistic whitespace between comment indicator and actual comment content
+                continue;
+            }
 
             comment.append(n);
         }
