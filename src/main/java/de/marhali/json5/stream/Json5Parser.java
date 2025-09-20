@@ -144,9 +144,7 @@ public final class Json5Parser {
 
                 else {
                     array = new Json5Array();
-                    // TODO: is that right?
                     array.add(object.get(key));
-
                     duplicates.add(key);
                 }
 
@@ -192,7 +190,7 @@ public final class Json5Parser {
                 case 0:
                     throw lexer.syntaxError("A Json5Array must end with ']'");
                 case ']':
-                    if(lexer.root && !lexer.options.isAllowTrailingData() && lexer.nextClean() != 0) {
+                    if (lexer.root && !lexer.options.isAllowTrailingData() && lexer.nextClean() != 0) {
                         throw lexer.syntaxError("Trailing data after Json5Array");
                     }
                     return array;
