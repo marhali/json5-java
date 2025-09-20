@@ -123,7 +123,7 @@ public final class Json5Parser {
             boolean duplicate = object.has(key);
 
             if (duplicate && duplicateKeyStrategy == DuplicateKeyStrategy.UNIQUE)
-                throw new Json5Exception("Duplicate key " + Json5Writer.quote(key, lexer.options));
+                throw lexer.syntaxError("Duplicate key " + Json5Writer.quote(key, lexer.options));
 
             control = lexer.nextClean();
 
