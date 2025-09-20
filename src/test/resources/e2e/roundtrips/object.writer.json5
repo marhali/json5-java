@@ -1,0 +1,52 @@
+// Object comment
+{
+  // Quotes tests
+  quotes: {
+    // Test double-quoted member name and string value
+    doubleQuoted: "Test \" 123",
+    // Test single-quoted member name and string value
+    singleQuoted: "Test ' 123",
+    // Test mixed quotes with double- and single-quotes
+    testMixedQuoted: "Test ' 123",
+  },
+  // Falsy boolean,
+  falsy: false,
+  // Truly boolean
+  truly: true,
+  // Test escape characters
+  escapes: "\\n\\r\\f\\b\\t\\u000B\\0\\u12Fa\\u007F",
+  // Test member names
+  memberNames: {
+    // Test member names
+    $LoremA_Ipsum123指事字: 0,
+  },
+  /*
+   * Some multi-line
+   * comment
+   */
+  multiLineComment: false,
+  // Hex numbers
+  hexNumbers: [
+    // Neutral hex number
+    0x303030,
+    // Positive hex number
+    0x303030,
+    // Negative hex number
+    -0x303030,
+  ],
+  // Special numbers
+  specialNumbers: [
+    NaN,
+    NaN,
+    NaN,
+    Infinity,
+    Infinity,
+    -Infinity,
+  ],
+  // Literals
+  literals: [
+    123,
+    123,
+    -123,
+  ],
+}

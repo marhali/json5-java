@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Google Inc.
- * Copyright (C) 2025 Marcel Haßlinger
+ * Copyright (C) 2022 - 2025 Marcel Haßlinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +14,28 @@
  * limitations under the License.
  */
 
-package de.marhali.json5;
+package de.marhali.json5.config;
 
 /**
- * A class representing a Json {@code null} literal value.
+ * An enum containing all supported behaviors for handling digit separators.
  *
- * @author Inderjeet Singh
- * @author Joel Leitch
  * @author Marcel Haßlinger
  */
-public final class Json5Null extends Json5Element {
-    public Json5Null() {}
+public enum DigitSeparatorStrategy {
 
-    @Override
-    public Json5Element deepCopy() {
-        Json5Null copy = new Json5Null();
-        copy.setComment(comment);
-        return copy;
-    }
+    /**
+     * Expect no digit separators
+     */
+    NONE,
 
-    @Override
-    public String getAsString() {
-        return "null";
-    }
+    /**
+     * Uses Java-style digit separators (e.g. {@code 123_456}).
+     */
+    JAVA_STYLE,
+
+    /**
+     * Uses C-style digit separators (e.g. {@code 123'456}).
+     */
+    C_STYLE,
+
 }

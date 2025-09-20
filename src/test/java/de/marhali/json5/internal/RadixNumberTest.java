@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2008 Google Inc.
  * Copyright (C) 2025 Marcel Haßlinger
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +14,30 @@
  * limitations under the License.
  */
 
-package de.marhali.json5;
+package de.marhali.json5.internal;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * A class representing a Json {@code null} literal value.
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
  * @author Marcel Haßlinger
  */
-public final class Json5Null extends Json5Element {
-    public Json5Null() {}
+public class RadixNumberTest {
 
-    @Override
-    public Json5Element deepCopy() {
-        Json5Null copy = new Json5Null();
-        copy.setComment(comment);
-        return copy;
+    @Test
+    void test_getNumber() {
+        assertEquals(187, new RadixNumber(187, 10).getNumber());
     }
 
-    @Override
-    public String getAsString() {
-        return "null";
+    @Test
+    void test_getRadix() {
+        assertEquals(10, new RadixNumber(187, 10).getRadix());
     }
+
+    @Test
+    void test_equals() {
+        assertEquals(new RadixNumber(187, 10), new RadixNumber(187, 10));
+    }
+
 }

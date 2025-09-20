@@ -1,0 +1,1 @@
+[true,false,"Test \" 123","Test ' 123","Test ' 123","\\n\\r\\f\\b\\t\\u000B\\0\\u12Fa\\u007F",true,0x303030,0x303030,-0x303030,NaN,NaN,NaN,Infinity,Infinity,-Infinity,123,123,-123,{key:"value",array:[true,false]}]

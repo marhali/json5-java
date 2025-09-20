@@ -1,0 +1,1 @@
+{quotes:{doubleQuoted:"Test \" 123",singleQuoted:"Test ' 123",testMixedQuoted:"Test ' 123"},falsy:false,truly:true,escapes:"\\n\\r\\f\\b\\t\\u000B\\0\\u12Fa\\u007F",memberNames:{$LoremA_Ipsum123指事字:0},multiLineComment:false,hexNumbers:[0x303030,0x303030,-0x303030],specialNumbers:[NaN,NaN,NaN,Infinity,Infinity,-Infinity],literals:[123,123,-123]}
