@@ -50,7 +50,7 @@ jobs:
 
       # Store an already-built library as an artifact for downloading
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: ./build/libs/*
 
@@ -85,7 +85,7 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
