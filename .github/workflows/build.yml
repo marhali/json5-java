@@ -124,7 +124,7 @@ jobs:
 
       # Run Qodana inspections
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2025.2
+        uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
         env:
